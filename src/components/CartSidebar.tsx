@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { CartItem } from '../types';
 import { X, Plus, Minus, Trash2, ArrowRight, Percent, ShieldCheck } from 'lucide-react';
+import { formatLKR } from '../lib/formatters';
 
 interface CartSidebarProps {
   isOpen: boolean;
@@ -27,7 +28,7 @@ export default function CartSidebar({
   if (!isOpen) return null;
 
   // Real-time calculations
-  const originalSubtotal = cartItems.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
+  const originalSubtotal = cartItems.reduce((acc, item) => acc + ((item.price || item.product?.price || 0) * item.quantity), 0);
   const subtotal = originalSubtotal * discountMultiplier;
   const discountAmount = originalSubtotal - subtotal;
   const shipping = subtotal === 0 ? 0 : subtotal >= 5000 ? 0 : 450;
@@ -91,56 +92,67 @@ export default function CartSidebar({
                 </button>
               </div>
             ) : (
-              cartItems.map(item => (
-                <div key={item.product.id} className="flex gap-4 border-b border-[#E2EBF1] pb-4 last:border-0 last:pb-0">
-                  <img
-                    src={item.product.image}
-                    alt={item.product.name}
-                    className="w-16 h-16 object-contain rounded-xl border border-gray-100 flex-shrink-0 bg-white"
-                  />
-                  
-                  <div className="flex-grow space-y-1">
-                    <p className="text-xs font-bold text-[#002D62] line-clamp-2">{item.product.name}</p>
-                    <p className="text-[10px] text-[#0082C8] font-bold capitalize">{item.product.category}</p>
+              cartItems.map(item => {
+                const itemId = item.id || item.product?.id || '';
+                const itemName = item.name || item.product?.name || '';
+                const itemImg = item.image_url || item.product?.image || 'https://i.imgur.com/QexihB2.png';
+                const itemPrice = item.price || item.product?.price || 0;
+                const itemStock = item.stock || item.product?.stock || 0;
+                const itemCategory = item.product?.category || '';
+
+                return (
+                  <div key={itemId} className="flex gap-4 border-b border-[#E2EBF1] pb-4 last:border-0 last:pb-0">
+                    <img
+                      src={itemImg}
+                      alt={itemName}
+                      className="w-16 h-16 object-contain rounded-xl border border-gray-100 flex-shrink-0 bg-white"
+                    />
                     
-                    <div className="flex justify-between items-center pt-2">
-                      {/* Quantity Controls */}
-                      <div className="flex items-center border border-gray-200 rounded-full bg-white p-0.5">
-                        <button
-                          onClick={() => onUpdateQuantity(item.product.id, item.quantity - 1)}
-                          className="w-6 h-6 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded-full cursor-pointer"
-                          disabled={item.quantity <= 1}
-                        >
-                          <Minus className="w-3 h-3" />
-                        </button>
-                        <span className="px-2.5 text-xs font-bold text-[#002D62]">{item.quantity}</span>
-                        <button
-                          onClick={() => onUpdateQuantity(item.product.id, item.quantity + 1)}
-                          className="w-6 h-6 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded-full cursor-pointer"
-                          disabled={item.quantity >= item.product.stock}
-                        >
-                          <Plus className="w-3 h-3" />
-                        </button>
+                    <div className="flex-grow space-y-1">
+                      <p className="text-xs font-bold text-[#002D62] line-clamp-2">{itemName}</p>
+                      {itemCategory && (
+                        <p className="text-[10px] text-[#0082C8] font-bold capitalize">{itemCategory}</p>
+                      )}
+                      
+                      <div className="flex justify-between items-center pt-2">
+                        {/* Quantity Controls */}
+                        <div className="flex items-center border border-gray-200 rounded-full bg-white p-0.5">
+                          <button
+                            onClick={() => onUpdateQuantity(itemId, item.quantity - 1)}
+                            className="w-6 h-6 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded-full cursor-pointer"
+                            disabled={item.quantity <= 1}
+                          >
+                            <Minus className="w-3 h-3" />
+                          </button>
+                          <span className="px-2.5 text-xs font-bold text-[#002D62] font-mono">{item.quantity}</span>
+                          <button
+                            onClick={() => onUpdateQuantity(itemId, item.quantity + 1)}
+                            className="w-6 h-6 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded-full cursor-pointer"
+                            disabled={item.quantity >= itemStock}
+                          >
+                            <Plus className="w-3 h-3" />
+                          </button>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                          <span className="text-xs font-black text-[#002D62]">{formatLKR(itemPrice * item.quantity)}</span>
+                          <button
+                            onClick={() => onRemoveFromCart(itemId)}
+                            className="text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
+                            title="Remove item"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
 
-                      <div className="flex items-center gap-3">
-                        <span className="text-xs font-black text-[#002D62]">Rs. {(item.product.price * item.quantity).toLocaleString()}</span>
-                        <button
-                          onClick={() => onRemoveFromCart(item.product.id)}
-                          className="text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
-                          title="Remove item"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
+                      {itemStock <= 5 && (
+                        <p className="text-[9px] text-amber-700 font-bold uppercase">Only {itemStock} left in clinical inventory</p>
+                      )}
                     </div>
-
-                    {item.product.stock <= 5 && (
-                      <p className="text-[9px] text-amber-700 font-bold uppercase">Only {item.product.stock} left in clinical inventory</p>
-                    )}
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
 
@@ -184,30 +196,30 @@ export default function CartSidebar({
               <div className="space-y-1.5 text-xs">
                 <div className="flex justify-between text-gray-500">
                   <span>Cart Subtotal</span>
-                  <span>Rs. {originalSubtotal.toLocaleString()}</span>
+                  <span className="font-mono font-bold">{formatLKR(originalSubtotal)}</span>
                 </div>
                 
                 {discountAmount > 0 && (
                   <div className="flex justify-between text-[#43B02A] font-bold">
                     <span>Clinical Voucher Discount (15%)</span>
-                    <span>-Rs. {discountAmount.toLocaleString()}</span>
+                    <span>-{formatLKR(discountAmount)}</span>
                   </div>
                 )}
 
                 <div className="flex justify-between text-gray-500">
                   <span>Packaging &amp; Delivery</span>
-                  <span className="font-bold">{shipping === 0 ? 'FREE' : `Rs. ${shipping.toLocaleString()}`}</span>
+                  <span className="font-bold">{shipping === 0 ? 'FREE' : formatLKR(shipping)}</span>
                 </div>
 
                 {shipping > 0 && (
                   <p className="text-[10px] text-[#0082C8] font-medium">
-                    *Add Rs. {(5000 - subtotal).toLocaleString()} more to qualify for FREE delivery!
+                    *Add {formatLKR(5000 - subtotal)} more to qualify for FREE delivery!
                   </p>
                 )}
 
                 <div className="border-t border-[#E2EBF1] my-2 pt-2 flex justify-between text-sm font-black text-[#002D62]">
                   <span>Total Due</span>
-                  <span>Rs. {total.toLocaleString()}</span>
+                  <span className="text-[#0082C8]">{formatLKR(total)}</span>
                 </div>
               </div>
 

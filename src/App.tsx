@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Product, Article, Order, CartItem } from './types';
-import { fetchDatabaseState, reorderApi } from './services/api';
+import { fetchDatabaseState, fetchActiveProductsFromSupabase, reorderApi } from './services/api';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ProductCatalog from './components/ProductCatalog';
@@ -31,22 +31,43 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
 
   // Shopping Cart states
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    try {
+      const cached = localStorage.getItem('cetaphil_cart_items');
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [checkoutDiscountMultiplier, setCheckoutDiscountMultiplier] = useState(1);
   const [checkoutDiscountCodeUsed, setCheckoutDiscountCodeUsed] = useState('');
 
-  // Fetch full clinical database state on initial render (safe against HTML errors)
+  // Temporary Buy Now checkout state
+  const [buyNowItem, setBuyNowItem] = useState<CartItem | null>(null);
+  // Source of current checkout: 'cart' | 'buy_now'
+  const [checkoutSource, setCheckoutSource] = useState<'cart' | 'buy_now'>('cart');
+
+  // Fetch full clinical database state on initial render
   const fetchDB = async () => {
     try {
+      // 1. Prioritize active products loaded from Supabase
+      const sbProducts = await fetchActiveProductsFromSupabase();
       const data = await fetchDatabaseState();
-      setProducts(data.products || []);
+      
+      if (sbProducts && sbProducts.length > 0) {
+        setProducts(sbProducts);
+      } else {
+        setProducts(data.products || []);
+      }
+
       setArticles(data.articles || []);
       setOrders(data.orders || []);
       setPromoBanner(data.promoBanner || { text: '', visible: false });
       setError(null);
-    } catch (err) {
+    } catch (err: any) {
       console.warn("Could not fetch remote state, fallback handled", err);
+      setError(err?.message || "Failed to load database state");
     } finally {
       setLoading(false);
     }
@@ -57,57 +78,182 @@ export default function App() {
   }, []);
 
   // CART OPERATIONS
-  const handleAddToCart = (product: Product, quantity: number) => {
+  const handleAddToCart = (product: Product, quantity = 1) => {
+    if (product.stock <= 0) return;
+
     setCart(prevCart => {
-      const existing = prevCart.find(item => item.product.id === product.id);
+      const existing = prevCart.find(item => item.id === product.id);
+      let updated: CartItem[];
+
       if (existing) {
         // Respect maximum stock limits
         const targetQty = Math.min(product.stock, existing.quantity + quantity);
-        return prevCart.map(item => item.product.id === product.id ? { ...item, quantity: targetQty } : item);
+        updated = prevCart.map(item =>
+          item.id === product.id
+            ? { ...item, quantity: targetQty, stock: product.stock, price: Number(product.price) }
+            : item
+        );
+      } else {
+        const newItem: CartItem = {
+          id: product.id,
+          name: product.name,
+          price: Number(product.price),
+          image_url: product.image_url || product.image,
+          quantity: Math.min(product.stock, quantity),
+          stock: Number(product.stock),
+          product: product
+        };
+        updated = [...prevCart, newItem];
       }
-      return [...prevCart, { product, quantity: Math.min(product.stock, quantity) }];
+
+      try {
+        localStorage.setItem('cetaphil_cart_items', JSON.stringify(updated));
+      } catch {}
+
+      return updated;
     });
+
     setIsCartOpen(true);
   };
 
   const handleUpdateCartQuantity = (productId: string, quantity: number) => {
     const targetProduct = products.find(p => p.id === productId);
-    if (!targetProduct) return;
-    const boundedQuantity = Math.max(1, Math.min(targetProduct.stock, quantity));
+    const maxStock = targetProduct ? targetProduct.stock : 999;
+    const boundedQuantity = Math.max(1, Math.min(maxStock, quantity));
 
-    setCart(prevCart =>
-      prevCart.map(item =>
-        item.product.id === productId ? { ...item, quantity: boundedQuantity } : item
-      )
-    );
+    setCart(prevCart => {
+      const updated = prevCart.map(item =>
+        item.id === productId ? { ...item, quantity: boundedQuantity } : item
+      );
+      try {
+        localStorage.setItem('cetaphil_cart_items', JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
   };
 
   const handleRemoveFromCart = (productId: string) => {
-    setCart(prevCart => prevCart.filter(item => item.product.id !== productId));
+    setCart(prevCart => {
+      const updated = prevCart.filter(item => item.id !== productId);
+      try {
+        localStorage.setItem('cetaphil_cart_items', JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
   };
 
-  const handleCheckoutInitiated = (discountMultiplier: number, discountCodeUsed: string) => {
+  // BUY NOW HANDLER:
+  // 1. Check whether product stock > 0
+  // 2. Clear any previous temporary checkout item
+  // 3. Add selected product to temporary checkout state with quantity 1
+  // 4. Navigate directly to the checkout page
+  // 5. Checkout page shows only the selected product and quantity 1
+  // 6. Normal cart remains available if returning to shop
+  const handleBuyNow = (product: Product, quantity = 1) => {
+    if (product.stock <= 0) {
+      alert("This product is currently out of stock.");
+      return;
+    }
+
+    const item: CartItem = {
+      id: product.id,
+      name: product.name,
+      price: Number(product.price),
+      image_url: product.image_url || product.image,
+      quantity: Math.min(product.stock, Math.max(1, quantity)),
+      stock: Number(product.stock),
+      product: product
+    };
+
+    setBuyNowItem(item);
+    setCheckoutSource('buy_now');
+    setCurrentView('checkout');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // NORMAL CART CHECKOUT HANDLER
+  const handleCheckoutInitiated = (discountMultiplier = 1, discountCodeUsed = '') => {
     setCheckoutDiscountMultiplier(discountMultiplier);
     setCheckoutDiscountCodeUsed(discountCodeUsed);
+    setCheckoutSource('cart');
     setIsCartOpen(false);
     setCurrentView('checkout');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleOrderPlaced = (newOrder: Order) => {
-    // Append to customer's order history state
-    setOrders(prevOrders => [newOrder, ...prevOrders]);
-    // Clear shopping cart
-    setCart([]);
-    // Update local product inventory levels from placing order
+  // CHECKOUT QUANTITY CONTROLS
+  const handleUpdateCheckoutQuantity = (productId: string, quantity: number) => {
+    if (checkoutSource === 'buy_now') {
+      if (buyNowItem && buyNowItem.id === productId) {
+        const bounded = Math.max(1, Math.min(buyNowItem.stock, quantity));
+        setBuyNowItem({ ...buyNowItem, quantity: bounded });
+      }
+    } else {
+      handleUpdateCartQuantity(productId, quantity);
+    }
+  };
+
+  const handleRemoveCheckoutItem = (productId: string) => {
+    if (checkoutSource === 'buy_now') {
+      setBuyNowItem(null);
+    } else {
+      handleRemoveFromCart(productId);
+    }
+  };
+
+  // SUCCESSFUL ORDER CALLBACK
+  const handleOrderSuccess = (orderId: string, details: any) => {
+    // Clear normal cart only if the ordered products came from the normal cart
+    if (details.fromCart) {
+      setCart([]);
+      try {
+        localStorage.removeItem('cetaphil_cart_items');
+      } catch {}
+    }
+    // Clear temporary checkout state
+    setBuyNowItem(null);
+
+    // Update local product inventory levels from placed order
     setProducts(prevProducts =>
       prevProducts.map(p => {
-        const orderedItem = newOrder.items.find(item => item.productId === p.id);
+        const orderedItem = details.items.find((item: any) => item.id === p.id);
         if (orderedItem) {
           return { ...p, stock: Math.max(0, p.stock - orderedItem.quantity) };
         }
         return p;
       })
     );
+
+    // Record order in customer's order history state for UserDashboard
+    const newOrderRecord: Order = {
+      id: orderId,
+      date: new Date().toISOString(),
+      items: details.items.map((it: any) => ({
+        productId: it.id,
+        name: it.name,
+        price: it.price,
+        quantity: it.quantity,
+        image: it.image_url || it.product?.image || ''
+      })),
+      subtotal: details.total,
+      shipping: 0,
+      tax: 0,
+      total: details.total,
+      status: 'Pending',
+      shippingAddress: {
+        fullName: details.customerName,
+        email: 'customer@order.com',
+        phone: details.phone,
+        address: details.address,
+        city: details.city,
+        zipCode: ''
+      },
+      paymentMethod: 'Cash on Delivery'
+    };
+    setOrders(prevOrders => [newOrderRecord, ...prevOrders]);
+
+    // Re-verify stocks from Supabase in the background
+    fetchDB();
   };
 
   const handleReorder = async (orderId: string): Promise<void> => {
@@ -132,6 +278,11 @@ export default function App() {
   // Find currently active product (if view is pdp)
   const activeProduct = products.find(p => p.id === selectedProductId);
 
+  // Active items for the checkout page
+  const activeCheckoutItems = checkoutSource === 'buy_now'
+    ? (buyNowItem ? [buyNowItem] : [])
+    : cart;
+
   // App loading screen
   if (loading) {
     return (
@@ -153,7 +304,7 @@ export default function App() {
   }
 
   // App error fallback screen
-  if (error) {
+  if (error && products.length === 0) {
     return (
       <div className="min-h-screen bg-[#f8f9ff] flex flex-col items-center justify-center p-6 text-center max-w-sm mx-auto space-y-4">
         <div className="w-12 h-12 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto border border-red-200">
@@ -163,7 +314,7 @@ export default function App() {
         <p className="text-xs text-gray-500 leading-relaxed">{error}</p>
         <button
           onClick={() => { setLoading(true); setError(null); fetchDB(); }}
-          className="px-4 py-2 bg-[#001e40] text-white text-xs font-bold rounded-lg hover:opacity-90"
+          className="px-4 py-2 bg-[#001e40] text-white text-xs font-bold rounded-lg hover:opacity-90 cursor-pointer"
         >
           Retry Connection
         </button>
@@ -190,6 +341,7 @@ export default function App() {
           <ProductCatalog
             products={products}
             onAddToCart={handleAddToCart}
+            onBuyNow={handleBuyNow}
             setSelectedProductId={setSelectedProductId}
             setCurrentView={setCurrentView}
           />
@@ -199,6 +351,7 @@ export default function App() {
           <BabyProductsPage
             products={products}
             onAddToCart={handleAddToCart}
+            onBuyNow={handleBuyNow}
             setSelectedProductId={setSelectedProductId}
             setCurrentView={setCurrentView}
           />
@@ -209,6 +362,7 @@ export default function App() {
             product={activeProduct}
             products={products}
             onAddToCart={handleAddToCart}
+            onBuyNow={handleBuyNow}
             setSelectedProductId={setSelectedProductId}
             setCurrentView={setCurrentView}
           />
@@ -243,10 +397,11 @@ export default function App() {
 
         {currentView === 'checkout' && (
           <Checkout
-            cartItems={cart}
-            discountMultiplier={checkoutDiscountMultiplier}
-            discountCodeUsed={checkoutDiscountCodeUsed}
-            onOrderPlaced={handleOrderPlaced}
+            checkoutItems={activeCheckoutItems}
+            checkoutSource={checkoutSource}
+            onUpdateQuantity={handleUpdateCheckoutQuantity}
+            onRemoveItem={handleRemoveCheckoutItem}
+            onOrderSuccess={handleOrderSuccess}
             setCurrentView={setCurrentView}
           />
         )}

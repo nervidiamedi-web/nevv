@@ -1,7 +1,168 @@
 import { DBState, Product, Article, Order, QuizAnswers, QuizRecommendation } from '../types';
 import { defaultDatabaseState } from '../data/defaultData';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 const STORAGE_KEY = 'cetaphil_clinical_db_v2';
+
+/**
+ * Loads active products directly from Supabase:
+ * .from("products")
+ * .select("*")
+ * .eq("is_active", true)
+ * .order("created_at", { ascending: true })
+ */
+export async function fetchActiveProductsFromSupabase(): Promise<Product[] | null> {
+  if (!isSupabaseConfigured) {
+    return null;
+  }
+  try {
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .eq('is_active', true)
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      console.warn('Supabase products query returned error:', error.message);
+      return null;
+    }
+
+    if (data && Array.isArray(data) && data.length > 0) {
+      return data.map((item: any) => ({
+        id: String(item.id),
+        slug: item.slug || '',
+        name: item.name || '',
+        category: item.category || 'cleanser',
+        size: item.size || undefined,
+        badge: item.badge || item.tag || undefined,
+        tag: item.badge || item.tag || undefined,
+        description: item.description || '',
+        price: Number(item.price) || 0,
+        stock: Number(item.stock) || 0,
+        image_url: item.image_url || item.image || 'https://i.imgur.com/QexihB2.png',
+        image: item.image_url || item.image || 'https://i.imgur.com/QexihB2.png',
+        images: item.images || [item.image_url || item.image || 'https://i.imgur.com/QexihB2.png'],
+        is_active: item.is_active ?? true,
+        skinConcern: item.skinConcern || ['Sensitive Skin'],
+        ingredients: item.ingredients || ['Niacinamide', 'Panthenol', 'Glycerin'],
+        fullIngredients: item.fullIngredients || '',
+        rating: Number(item.rating) || 5,
+        reviewsCount: Number(item.reviewsCount) || 120,
+        benefits: item.benefits || [],
+        usage: item.usage || '',
+        created_at: item.created_at,
+        updated_at: item.updated_at
+      }));
+    }
+  } catch (err) {
+    console.warn('Failed to query Supabase products:', err);
+  }
+  return null;
+}
+
+/**
+ * Places an order using the Supabase RPC function:
+ * create_order(p_customer_name, p_phone, p_address, p_city, p_items)
+ */
+export interface PlaceOrderParams {
+  customerName: string;
+  phone: string;
+  whatsapp?: string;
+  address: string;
+  city: string;
+  checkoutItems: {
+    id: string;
+    quantity: number;
+    price?: number;
+    name?: string;
+  }[];
+}
+
+export async function placeOrderRpc(params: PlaceOrderParams): Promise<{
+  success: boolean;
+  orderId?: string;
+  error?: string;
+}> {
+  const { customerName, phone, whatsapp, address, city, checkoutItems } = params;
+
+  // Form field validations
+  if (!customerName || !customerName.trim()) {
+    return { success: false, error: 'Full name cannot be empty.' };
+  }
+  if (!phone || !phone.trim()) {
+    return { success: false, error: 'Phone number cannot be empty.' };
+  }
+  if (!address || !address.trim()) {
+    return { success: false, error: 'Full delivery address cannot be empty.' };
+  }
+  if (!city || !city.trim()) {
+    return { success: false, error: 'City cannot be empty.' };
+  }
+  if (!checkoutItems || checkoutItems.length === 0) {
+    return { success: false, error: 'At least one product must be in checkout.' };
+  }
+  for (const item of checkoutItems) {
+    if (!item.quantity || item.quantity < 1) {
+      return { success: false, error: 'Quantity must be at least 1.' };
+    }
+  }
+
+  // Execute Supabase RPC function if connected
+  if (isSupabaseConfigured) {
+    try {
+      const { data: orderId, error } = await supabase.rpc('create_order', {
+        p_customer_name: customerName.trim(),
+        p_phone: phone.trim(),
+        p_address: address.trim(),
+        p_city: city.trim(),
+        p_items: checkoutItems.map((item) => ({
+          product_id: item.id,
+          quantity: item.quantity
+        }))
+      });
+
+      if (error) {
+        return {
+          success: false,
+          error: error.message || 'Failed to place order in Supabase.'
+        };
+      }
+
+      if (!orderId) {
+        return {
+          success: false,
+          error: 'Order could not be registered. Please verify your details.'
+        };
+      }
+
+      // If optional WhatsApp was provided, attempt to record it on the order
+      if (whatsapp && whatsapp.trim()) {
+        try {
+          await supabase.from('orders').update({ whatsapp: whatsapp.trim() }).eq('id', orderId);
+        } catch {
+          // Non-fatal if column or permissions differ
+        }
+      }
+
+      return {
+        success: true,
+        orderId: String(orderId)
+      };
+    } catch (rpcErr: any) {
+      return {
+        success: false,
+        error: rpcErr?.message || 'Could not connect to Supabase server. Please check your network connection.'
+      };
+    }
+  }
+
+  // Fallback simulator for preview environments without live Supabase credentials
+  const simulatedId = 'ord-' + Math.floor(100000 + Math.random() * 900000);
+  return {
+    success: true,
+    orderId: simulatedId
+  };
+}
 
 /**
  * Safely fetches JSON from an endpoint.
@@ -73,6 +234,16 @@ export function saveStoredDB(state: DBState): void {
  * If server returns HTML or fails (e.g. GitHub Pages static deployment), seamlessly returns stored state.
  */
 export async function fetchDatabaseState(): Promise<DBState> {
+  // First, prioritize loading active products directly from Supabase
+  const sbProducts = await fetchActiveProductsFromSupabase();
+  if (sbProducts && sbProducts.length > 0) {
+    const baseDB = getStoredDB();
+    return {
+      ...baseDB,
+      products: sbProducts
+    };
+  }
+
   const remote = await safeJsonFetch<DBState>('/api/db');
   if (remote && Array.isArray(remote.products) && remote.products.length > 0) {
     saveStoredDB(remote);

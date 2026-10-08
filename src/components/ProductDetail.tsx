@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Product } from '../types';
-import { ChevronLeft, Star, ShoppingCart, HelpCircle, Sparkles, RefreshCw, BookOpen, AlertTriangle } from 'lucide-react';
+import { ChevronLeft, Star, ShoppingCart, HelpCircle, Sparkles, RefreshCw, BookOpen, AlertTriangle, Zap } from 'lucide-react';
 import { askAdvisorApi } from '../services/api';
+import { formatLKR } from '../lib/formatters';
 
 interface ProductDetailProps {
   product: Product;
   products: Product[];
   onAddToCart: (product: Product, quantity: number) => void;
+  onBuyNow: (product: Product, quantity?: number) => void;
   setSelectedProductId: (id: string | null) => void;
   setCurrentView: (view: string) => void;
 }
@@ -15,6 +17,7 @@ export default function ProductDetail({
   product,
   products,
   onAddToCart,
+  onBuyNow,
   setSelectedProductId,
   setCurrentView
 }: ProductDetailProps) {
@@ -142,7 +145,14 @@ export default function ProductDetail({
             <div className="flex justify-between items-center">
               <div>
                 <p className="text-[10px] text-gray-400 uppercase font-bold">Clinical Formulation Cost</p>
-                <p className="text-2xl font-black text-[#002D62]">Rs. {product.price.toLocaleString()}</p>
+                <div className="flex items-baseline gap-2">
+                  <p className="text-2xl font-black text-[#002D62]">{formatLKR(product.price)}</p>
+                  {product.size && (
+                    <span className="text-xs text-gray-500 font-bold bg-white px-2 py-0.5 rounded-md border border-gray-200">
+                      {product.size}
+                    </span>
+                  )}
+                </div>
               </div>
               <div>
                 <p className="text-[10px] text-gray-400 uppercase font-bold text-right">Inventory Availability</p>
@@ -157,38 +167,54 @@ export default function ProductDetail({
             </div>
 
             {product.stock > 0 && (
-              <div className="flex items-center gap-4 pt-2">
-                <div className="flex items-center border border-gray-200 bg-white rounded-full p-0.5">
-                  <button
-                    onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
-                    className="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded-full text-sm font-bold cursor-pointer"
-                  >
-                    -
-                  </button>
-                  <span className="px-4 text-xs font-bold text-[#002D62]">{quantity}</span>
-                  <button
-                    onClick={() => setQuantity(prev => Math.min(product.stock, prev + 1))}
-                    className="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded-full text-sm font-bold cursor-pointer"
-                  >
-                    +
-                  </button>
+              <div className="space-y-3 pt-2">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center border border-gray-200 bg-white rounded-full p-0.5">
+                    <button
+                      onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
+                      className="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded-full text-sm font-bold cursor-pointer"
+                    >
+                      -
+                    </button>
+                    <span className="px-4 text-xs font-bold text-[#002D62] font-mono">{quantity}</span>
+                    <button
+                      onClick={() => setQuantity(prev => Math.min(product.stock, prev + 1))}
+                      className="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded-full text-sm font-bold cursor-pointer"
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  <span className="text-[11px] text-gray-500">
+                    Max: {product.stock} available units
+                  </span>
                 </div>
 
-                <button
-                  onClick={() => {
-                    onAddToCart(product, quantity);
-                    const btn = document.getElementById('pdp-add-btn');
-                    if (btn) {
-                      btn.innerText = "Regimen Updated! ✓";
-                      setTimeout(() => { if (btn) btn.innerText = "Add Regimen to Cart"; }, 2000);
-                    }
-                  }}
-                  id="pdp-add-btn"
-                  className="flex-grow py-3.5 bg-[#002D62] hover:bg-[#0082C8] text-white font-bold text-xs uppercase tracking-wider rounded-full shadow-md flex items-center justify-center gap-2 transition-colors cursor-pointer"
-                >
-                  <ShoppingCart className="w-4 h-4" />
-                  Add Regimen to Cart
-                </button>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button
+                    onClick={() => {
+                      onAddToCart(product, quantity);
+                      const btn = document.getElementById('pdp-add-btn');
+                      if (btn) {
+                        btn.innerText = "Regimen Added! ✓";
+                        setTimeout(() => { if (btn) btn.innerText = "Add to Cart"; }, 2000);
+                      }
+                    }}
+                    id="pdp-add-btn"
+                    className="flex-1 py-3.5 border-2 border-[#002D62] hover:bg-[#EEF5F9] text-[#002D62] font-bold text-xs uppercase tracking-wider rounded-full shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                  >
+                    <ShoppingCart className="w-4 h-4" />
+                    Add to Cart
+                  </button>
+
+                  <button
+                    onClick={() => onBuyNow(product, quantity)}
+                    className="flex-1 py-3.5 bg-[#0082C8] hover:bg-[#006EA8] text-white font-extrabold text-xs uppercase tracking-wider rounded-full shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer hover:shadow-lg"
+                  >
+                    <Zap className="w-4 h-4 fill-current" />
+                    Buy Now
+                  </button>
+                </div>
               </div>
             )}
           </div>

@@ -1,24 +1,31 @@
 export interface Product {
   id: string;
+  slug?: string;
   name: string;
-  category: string; // 'cleanser' | 'serum' | 'cream' | 'exfoliant' | 'mask'
+  category: string; // 'cleanser' | 'serum' | 'cream' | 'exfoliant' | 'mask' | 'sunscreen' | 'baby'
+  size?: string;
+  badge?: string;
+  tag?: string; // 'Bestseller' | 'New' | 'Tested'
+  description: string;
+  price: number;
+  stock: number;
+  image_url?: string;
+  image: string;
+  images?: string[];
+  is_active?: boolean;
   skinConcern: string[]; // 'Dry Skin' | 'Oily Skin' | 'Acne-Prone' | 'Sensitive Skin' | 'Anti-Aging'
   ingredients: string[];
   fullIngredients: string;
-  price: number;
-  stock: number;
   rating: number;
   reviewsCount: number;
-  description: string;
   benefits: string[];
   usage: string;
-  image: string;
-  images?: string[];
   reviews?: Review[];
-  tag?: string; // 'Bestseller' | 'New' | 'Tested'
   metaTitle?: string;
   metaDescription?: string;
   seoUrl?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface Review {
@@ -50,8 +57,14 @@ export interface Article {
 }
 
 export interface CartItem {
-  product: Product;
+  id: string;
+  name: string;
+  price: number;
+  image_url: string;
   quantity: number;
+  stock: number;
+  // Backward compatibility helper
+  product?: Product;
 }
 
 export interface Order {

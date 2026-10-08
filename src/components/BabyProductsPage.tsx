@@ -1,10 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { Product } from '../types';
-import { Heart, Sparkles, ShieldCheck, CheckCircle2, ShoppingCart, Star, Droplets, Baby, Award, ArrowRight } from 'lucide-react';
+import { Heart, Sparkles, ShieldCheck, CheckCircle2, ShoppingCart, Star, Droplets, Baby, Award, ArrowRight, Zap } from 'lucide-react';
+import { formatLKR } from '../lib/formatters';
 
 interface BabyProductsPageProps {
   products: Product[];
   onAddToCart: (product: Product, quantity: number) => void;
+  onBuyNow: (product: Product) => void;
   setSelectedProductId: (id: string | null) => void;
   setCurrentView: (view: string) => void;
 }
@@ -12,6 +14,7 @@ interface BabyProductsPageProps {
 export default function BabyProductsPage({
   products,
   onAddToCart,
+  onBuyNow,
   setSelectedProductId,
   setCurrentView
 }: BabyProductsPageProps) {
@@ -339,36 +342,70 @@ export default function BabyProductsPage({
                     </div>
                   </div>
 
-                  {/* Price & Add to Cart button */}
-                  <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
-                    <div>
-                      <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Price in Sri Lanka</span>
-                      <span className="text-xl font-black text-[#002D62]">
-                        Rs. {product.price.toLocaleString()}
-                      </span>
+                  {/* Price, Stock & Action buttons */}
+                  <div className="pt-3 border-t border-gray-100 space-y-3">
+                    <div className="flex items-baseline justify-between">
+                      <div>
+                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Price in Sri Lanka</span>
+                        <span className="text-xl font-black text-[#002D62]">
+                          {formatLKR(product.price)}
+                        </span>
+                      </div>
+                      <div>
+                        {product.stock <= 0 ? (
+                          <span className="text-[10px] text-red-600 font-bold uppercase bg-red-50 px-2 py-0.5 rounded-full border border-red-200">
+                            Out of Stock
+                          </span>
+                        ) : product.stock <= 10 ? (
+                          <span className="text-[10px] text-amber-700 font-bold uppercase bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                            Low Stock ({product.stock})
+                          </span>
+                        ) : (
+                          <span className="text-[10px] text-[#43B02A] font-bold uppercase bg-[#E6F4EA] px-2 py-0.5 rounded-full border border-[#C8E6C9]">
+                            In Stock ({product.stock})
+                          </span>
+                        )}
+                      </div>
                     </div>
 
-                    <button
-                      onClick={() => handleQuickAdd(product)}
-                      disabled={isAdded}
-                      className={`px-5 py-2.5 rounded-full font-extrabold text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs cursor-pointer ${
-                        isAdded
-                          ? 'bg-[#43B02A] text-white'
-                          : 'bg-[#002D62] hover:bg-[#0082C8] text-white'
-                      }`}
-                    >
-                      {isAdded ? (
-                        <>
-                          <CheckCircle2 className="w-4 h-4" />
-                          Added to Bag
-                        </>
-                      ) : (
-                        <>
-                          <ShoppingCart className="w-4 h-4" />
-                          Add to Cart
-                        </>
-                      )}
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleQuickAdd(product)}
+                        disabled={isAdded || product.stock <= 0}
+                        className={`flex-1 py-2.5 rounded-full font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer ${
+                          product.stock <= 0
+                            ? 'opacity-40 cursor-not-allowed bg-gray-100 text-gray-400 border border-gray-200'
+                            : isAdded
+                            ? 'bg-[#43B02A] text-white'
+                            : 'border-2 border-[#002D62] text-[#002D62] hover:bg-[#EEF5F9]'
+                        }`}
+                      >
+                        {isAdded ? (
+                          <>
+                            <CheckCircle2 className="w-4 h-4" />
+                            Added
+                          </>
+                        ) : (
+                          <>
+                            <ShoppingCart className="w-4 h-4" />
+                            Add to Cart
+                          </>
+                        )}
+                      </button>
+
+                      <button
+                        onClick={() => onBuyNow(product)}
+                        disabled={product.stock <= 0}
+                        className={`flex-1 py-2.5 rounded-full font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-sm transition-all ${
+                          product.stock <= 0
+                            ? 'opacity-40 cursor-not-allowed bg-gray-300 text-gray-500'
+                            : 'bg-[#0082C8] hover:bg-[#006EA8] text-white cursor-pointer hover:shadow-md'
+                        }`}
+                      >
+                        <Zap className="w-4 h-4 fill-current" />
+                        Buy Now
+                      </button>
+                    </div>
                   </div>
 
                 </div>

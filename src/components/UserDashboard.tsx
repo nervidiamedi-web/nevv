@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Order } from '../types';
 import { ShoppingBag, ChevronRight, RefreshCw, CheckCircle2, ShieldCheck, Mail, Clock } from 'lucide-react';
+import { formatLKR } from '../lib/formatters';
 
 interface UserDashboardProps {
   orders: Order[];
@@ -134,7 +135,7 @@ export default function UserDashboard({
                   </div>
 
                   <div className="flex items-center gap-4 justify-between w-full sm:w-auto">
-                    <span className="text-sm font-extrabold text-[#002D62]">Rs. {order.total.toLocaleString()}</span>
+                    <span className="text-sm font-extrabold text-[#002D62]">{formatLKR(order.total)}</span>
                     <ChevronRight className="w-4 h-4 text-gray-400 hidden sm:block" />
                   </div>
                 </div>
@@ -202,7 +203,7 @@ export default function UserDashboard({
                         {item.name}
                       </button>
                     </div>
-                    <span className="text-[#002D62] font-bold text-xs flex-shrink-0">Rs. {item.price.toLocaleString()}</span>
+                    <span className="text-[#002D62] font-bold text-xs flex-shrink-0">{formatLKR(item.price)}</span>
                   </div>
                 ))}
               </div>
@@ -211,15 +212,15 @@ export default function UserDashboard({
               <div className="space-y-1.5 text-xs border-t border-[#E2EBF1] pt-3 text-gray-500">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span>Rs. {selectedOrder.subtotal.toLocaleString()}</span>
+                  <span>{formatLKR(selectedOrder.subtotal)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>
-                  <span>{selectedOrder.shipping === 0 ? <span className="text-[#43B02A] font-bold">FREE</span> : `Rs. ${selectedOrder.shipping.toLocaleString()}`}</span>
+                  <span>{selectedOrder.shipping === 0 ? <span className="text-[#43B02A] font-bold">FREE</span> : formatLKR(selectedOrder.shipping)}</span>
                 </div>
                 <div className="flex justify-between font-extrabold text-[#002D62] border-t border-[#E2EBF1] pt-2 text-sm mt-1">
                   <span>Total Paid</span>
-                  <span>Rs. {selectedOrder.total.toLocaleString()}</span>
+                  <span>{formatLKR(selectedOrder.total)}</span>
                 </div>
               </div>
 

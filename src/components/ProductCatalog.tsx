@@ -1,10 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { Product } from '../types';
-import { SlidersHorizontal, Sparkles, Filter, ShoppingCart, RefreshCw, Star, Quote, CheckCircle, X } from 'lucide-react';
+import { SlidersHorizontal, Sparkles, Filter, ShoppingCart, RefreshCw, Star, Quote, CheckCircle, X, Zap } from 'lucide-react';
+import { formatLKR } from '../lib/formatters';
 
 interface ProductCatalogProps {
   products: Product[];
   onAddToCart: (product: Product, quantity: number) => void;
+  onBuyNow: (product: Product) => void;
   setSelectedProductId: (id: string | null) => void;
   setCurrentView: (view: string) => void;
 }
@@ -12,6 +14,7 @@ interface ProductCatalogProps {
 export default function ProductCatalog({
   products,
   onAddToCart,
+  onBuyNow,
   setSelectedProductId,
   setCurrentView
 }: ProductCatalogProps) {
@@ -400,8 +403,8 @@ export default function ProductCatalog({
                   className="w-full accent-[#0082C8] h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                 />
                 <div className="flex justify-between text-[10px] text-gray-400 font-mono">
-                  <span>Rs. 500</span>
-                  <span>Rs. 15,000</span>
+                  <span>LKR 500</span>
+                  <span>LKR 15,000</span>
                 </div>
               </div>
 
@@ -516,16 +519,16 @@ export default function ProductCatalog({
                   className="bg-white border border-[#E2EBF1] rounded-2xl overflow-hidden hover:shadow-lg hover:border-[#0082C8]/50 transition-all flex flex-col group relative"
                 >
                   
-                  {/* Banner ribbon badge */}
-                  {product.tag && (
+                  {/* Banner ribbon badge / Tag */}
+                  {(product.badge || product.tag) && (
                     <span className={`absolute top-3 left-3 z-10 px-2.5 py-0.5 rounded-full text-[8px] font-extrabold uppercase tracking-widest ${
-                      product.tag === 'Bestseller'
+                      (product.badge || product.tag) === 'Bestseller'
                         ? 'bg-[#EEF5F9] text-[#0082C8] border border-[#D1E5F2]'
-                        : product.tag === 'New'
+                        : (product.badge || product.tag) === 'New'
                         ? 'bg-[#E6F4EA] text-[#43B02A] border border-[#C8E6C9]'
                         : 'bg-amber-50 text-amber-800 border border-amber-200'
                     }`}>
-                      {product.tag}
+                      {product.badge || product.tag}
                     </span>
                   )}
 
@@ -535,7 +538,7 @@ export default function ProductCatalog({
                     className="relative w-full h-52 bg-white cursor-pointer overflow-hidden p-4 flex items-center justify-center border-b border-gray-100"
                   >
                     <img
-                      src={product.image}
+                      src={product.image_url || product.image}
                       alt={product.name}
                       referrerPolicy="no-referrer"
                       className="max-h-full max-w-full object-contain group-hover:scale-106 transition-transform duration-300"
@@ -549,56 +552,103 @@ export default function ProductCatalog({
                         <span className="text-[#0082C8]">{product.category}</span>
                         <div className="flex items-center gap-0.5 text-amber-500 font-bold">
                           <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                          <span>{product.rating}</span>
+                          <span>{product.rating || 5}</span>
                         </div>
                       </div>
 
-                      <h3
-                        onClick={() => handleCardClick(product.id)}
-                        className="text-xs font-bold text-[#0A1C2A] leading-snug group-hover:text-[#0082C8] hover:underline cursor-pointer line-clamp-2 h-8 transition-colors"
-                      >
-                        {product.name}
-                      </h3>
-
-                      {/* Ingredients small tags */}
-                      <div className="flex flex-wrap gap-1 pt-1">
-                        {product.ingredients.slice(0, 2).map((ing, idx) => (
-                          <span key={idx} className="bg-[#F4F8FA] text-gray-600 text-[8px] font-semibold px-2 py-0.5 rounded-full border border-gray-100">
-                            {ing}
+                      <div className="flex items-baseline justify-between gap-1">
+                        <h3
+                          onClick={() => handleCardClick(product.id)}
+                          className="text-xs font-bold text-[#0A1C2A] leading-snug group-hover:text-[#0082C8] hover:underline cursor-pointer line-clamp-2 h-8 transition-colors flex-grow"
+                        >
+                          {product.name}
+                        </h3>
+                        {product.size && (
+                          <span className="text-[10px] font-bold text-gray-500 bg-[#F4F8FA] px-1.5 py-0.5 rounded border border-gray-100 whitespace-nowrap shrink-0">
+                            {product.size}
                           </span>
-                        ))}
-                        {product.ingredients.length > 2 && (
-                          <span className="text-[8px] text-gray-400 mt-0.5 ml-0.5">+{product.ingredients.length - 2} more</span>
                         )}
                       </div>
+
+                      {/* Ingredients small tags */}
+                      {product.ingredients && product.ingredients.length > 0 && (
+                        <div className="flex flex-wrap gap-1 pt-1">
+                          {product.ingredients.slice(0, 2).map((ing, idx) => (
+                            <span key={idx} className="bg-[#F4F8FA] text-gray-600 text-[8px] font-semibold px-2 py-0.5 rounded-full border border-gray-100">
+                              {ing}
+                            </span>
+                          ))}
+                          {product.ingredients.length > 2 && (
+                            <span className="text-[8px] text-gray-400 mt-0.5 ml-0.5">+{product.ingredients.length - 2} more</span>
+                          )}
+                        </div>
+                      )}
                     </div>
 
-                    <div className="pt-3 border-t border-gray-100 flex justify-between items-center">
-                      <div>
-                        <span className="text-sm font-extrabold text-[#002D62]">Rs. {product.price.toLocaleString()}</span>
+                    <div className="pt-3 border-t border-gray-100 space-y-2.5">
+                      <div className="flex justify-between items-baseline">
+                        <div>
+                          <span className="text-[9px] text-gray-400 font-bold uppercase tracking-wider block">Price</span>
+                          <span className="text-sm sm:text-base font-black text-[#002D62]">{formatLKR(product.price)}</span>
+                        </div>
+
+                        <div>
+                          {product.stock <= 0 ? (
+                            <span className="text-[9px] text-red-600 font-bold uppercase bg-red-50 px-2 py-0.5 rounded-full border border-red-200">
+                              Out of Stock
+                            </span>
+                          ) : product.stock <= 10 ? (
+                            <span className="text-[9px] text-amber-700 font-bold uppercase bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                              Low Stock ({product.stock})
+                            </span>
+                          ) : (
+                            <span className="text-[9px] text-[#43B02A] font-bold uppercase bg-[#E6F4EA] px-2 py-0.5 rounded-full border border-[#C8E6C9]">
+                              In Stock ({product.stock})
+                            </span>
+                          )}
+                        </div>
                       </div>
 
-                      {product.stock === 0 ? (
-                        <span className="text-[9px] text-red-500 font-bold uppercase bg-red-50 px-2 py-0.5 rounded-full border border-red-200">
-                          Out of Stock
-                        </span>
-                      ) : (
+                      {/* Action buttons: Add to Cart and Buy Now */}
+                      <div className="flex gap-2">
                         <button
-                          onClick={() => {
+                          disabled={product.stock <= 0}
+                          onClick={(e) => {
+                            e.stopPropagation();
                             onAddToCart(product, 1);
                             const btn = document.getElementById(`grid-add-${product.id}`);
                             if (btn) {
                               btn.innerText = "Added ✓";
-                              setTimeout(() => { if (btn) btn.innerText = "Add to Cart"; }, 2000);
+                              setTimeout(() => { if (btn) btn.innerText = "Add to Cart"; }, 1800);
                             }
                           }}
                           id={`grid-add-${product.id}`}
-                          className="text-[10px] font-bold bg-[#002D62] hover:bg-[#0082C8] text-white px-3.5 py-1.5 rounded-full shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
+                          className={`flex-1 text-[10px] font-bold py-2 px-2.5 rounded-xl flex items-center justify-center gap-1 transition-all ${
+                            product.stock <= 0
+                              ? 'opacity-40 cursor-not-allowed bg-gray-100 text-gray-400 border border-gray-200'
+                              : 'border-2 border-[#002D62] text-[#002D62] hover:bg-[#EEF5F9] cursor-pointer'
+                          }`}
                         >
                           <ShoppingCart className="w-3.5 h-3.5" />
                           Add to Cart
                         </button>
-                      )}
+
+                        <button
+                          disabled={product.stock <= 0}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onBuyNow(product);
+                          }}
+                          className={`flex-1 text-[10px] font-extrabold py-2 px-2.5 rounded-xl flex items-center justify-center gap-1 shadow-xs transition-all ${
+                            product.stock <= 0
+                              ? 'opacity-40 cursor-not-allowed bg-gray-300 text-gray-500'
+                              : 'bg-[#0082C8] hover:bg-[#006EA8] text-white cursor-pointer hover:shadow-md'
+                          }`}
+                        >
+                          <Zap className="w-3.5 h-3.5 fill-current" />
+                          Buy Now
+                        </button>
+                      </div>
                     </div>
                   </div>
 
@@ -881,21 +931,33 @@ export default function ProductCatalog({
                     <div className="space-y-2.5">
                       {/* Pricing */}
                       <div className="flex items-baseline gap-2">
-                        <span className="text-sm font-black text-[#002D62]">Rs. {Number(prod.price).toLocaleString()}</span>
-                        <span className="text-[10px] text-gray-400 line-through">Rs. {Number(originalPrice).toLocaleString()}</span>
+                        <span className="text-sm font-black text-[#002D62]">{formatLKR(prod.price)}</span>
+                        <span className="text-[10px] text-gray-400 line-through">{formatLKR(originalPrice)}</span>
                       </div>
 
-                      {/* Action Button */}
-                      <button
-                        onClick={() => {
-                          const globalProduct = products.find(p => p.id === prod.id) || prod;
-                          onAddToCart(globalProduct, 1);
-                        }}
-                        className="w-full inline-flex items-center justify-center gap-1.5 bg-[#002D62] hover:bg-[#0082C8] text-white text-[10px] font-extrabold uppercase py-2.5 rounded-full transition-colors cursor-pointer shadow-xs"
-                      >
-                        <ShoppingCart className="w-3 h-3" />
-                        Add To Regime
-                      </button>
+                      {/* Action Buttons */}
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => {
+                            const globalProduct = products.find(p => p.id === prod.id) || prod;
+                            onAddToCart(globalProduct, 1);
+                          }}
+                          className="flex-1 inline-flex items-center justify-center gap-1 border-2 border-[#002D62] text-[#002D62] hover:bg-[#EEF5F9] text-[10px] font-bold uppercase py-2 rounded-xl transition-colors cursor-pointer"
+                        >
+                          <ShoppingCart className="w-3 h-3" />
+                          Add
+                        </button>
+                        <button
+                          onClick={() => {
+                            const globalProduct = products.find(p => p.id === prod.id) || prod;
+                            onBuyNow(globalProduct);
+                          }}
+                          className="flex-1 inline-flex items-center justify-center gap-1 bg-[#0082C8] hover:bg-[#006EA8] text-white text-[10px] font-extrabold uppercase py-2 rounded-xl transition-colors cursor-pointer shadow-xs"
+                        >
+                          <Zap className="w-3 h-3 fill-current" />
+                          Buy Now
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
