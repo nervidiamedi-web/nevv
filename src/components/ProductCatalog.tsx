@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Product } from '../types';
 import { SlidersHorizontal, Sparkles, Filter, ShoppingCart, RefreshCw, Star, Quote, CheckCircle, X, Zap } from 'lucide-react';
 import { formatLKR } from '../lib/formatters';
+import { toDirectImageUrl } from '../lib/imageUrl';
 
 interface ProductCatalogProps {
   products: Product[];
@@ -538,7 +539,7 @@ export default function ProductCatalog({
                     className="relative w-full h-52 bg-white cursor-pointer overflow-hidden p-4 flex items-center justify-center border-b border-gray-100"
                   >
                     <img
-                      src={product.image_url || product.image}
+                      src={toDirectImageUrl(product.image_url || product.image, product.slug || product.id)}
                       alt={product.name}
                       referrerPolicy="no-referrer"
                       className="max-h-full max-w-full object-contain group-hover:scale-106 transition-transform duration-300"
@@ -547,32 +548,46 @@ export default function ProductCatalog({
 
                   {/* Card Content info */}
                   <div className="p-4 sm:p-5 flex-grow flex flex-col justify-between space-y-3">
-                    <div className="space-y-1.5">
+                    <div className="space-y-2">
                       <div className="flex justify-between items-center text-[9px] font-bold uppercase tracking-wider">
                         <span className="text-[#0082C8]">{product.category}</span>
-                        <div className="flex items-center gap-0.5 text-amber-500 font-bold">
+                        <div className="flex items-center gap-1 text-amber-500 font-bold">
                           <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                          <span>{product.rating || 5}</span>
+                          <span>{(product.rating || 5).toFixed(1)}</span>
+                          <span className="text-gray-400 text-[8px] font-medium lowercase">
+                            ({product.reviews?.length || product.reviewsCount || 0} reviews)
+                          </span>
                         </div>
                       </div>
 
-                      <div className="flex items-baseline justify-between gap-1">
+                      <div className="flex items-baseline justify-between gap-1.5">
                         <h3
                           onClick={() => handleCardClick(product.id)}
-                          className="text-xs font-bold text-[#0A1C2A] leading-snug group-hover:text-[#0082C8] hover:underline cursor-pointer line-clamp-2 h-8 transition-colors flex-grow"
+                          className="text-xs font-bold text-[#0A1C2A] leading-snug group-hover:text-[#0082C8] hover:underline cursor-pointer line-clamp-2 min-h-8 transition-colors flex-grow"
                         >
                           {product.name}
                         </h3>
                         {product.size && (
-                          <span className="text-[10px] font-bold text-gray-500 bg-[#F4F8FA] px-1.5 py-0.5 rounded border border-gray-100 whitespace-nowrap shrink-0">
+                          <span className="text-[10px] font-bold text-[#002D62] bg-[#EEF5F9] px-2 py-0.5 rounded-md border border-[#D1E5F2] whitespace-nowrap shrink-0">
                             {product.size}
                           </span>
                         )}
                       </div>
 
+                      {/* Short Description */}
+                      {product.short_description ? (
+                        <p className="text-[11px] text-gray-500 line-clamp-2 leading-relaxed">
+                          {product.short_description}
+                        </p>
+                      ) : product.description ? (
+                        <p className="text-[11px] text-gray-500 line-clamp-2 leading-relaxed">
+                          {product.description.replace(/^###.*$/gm, '').trim()}
+                        </p>
+                      ) : null}
+
                       {/* Ingredients small tags */}
                       {product.ingredients && product.ingredients.length > 0 && (
-                        <div className="flex flex-wrap gap-1 pt-1">
+                        <div className="flex flex-wrap gap-1 pt-0.5">
                           {product.ingredients.slice(0, 2).map((ing, idx) => (
                             <span key={idx} className="bg-[#F4F8FA] text-gray-600 text-[8px] font-semibold px-2 py-0.5 rounded-full border border-gray-100">
                               {ing}

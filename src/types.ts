@@ -2,16 +2,18 @@ export interface Product {
   id: string;
   slug?: string;
   name: string;
-  category: string; // 'cleanser' | 'serum' | 'cream' | 'exfoliant' | 'mask' | 'sunscreen' | 'baby'
+  category: string; // 'Face Cleanser' | 'Moisturizer' | 'Sunscreen' | 'Body Lotion' etc.
   size?: string;
   badge?: string;
-  tag?: string; // 'Bestseller' | 'New' | 'Tested'
+  tag?: string; // 'Bestseller' | 'Popular' | 'Canadian Import' | 'Derm-Fav' | 'Mega Size' | 'SPF 50+ High Defense' | 'Intense Hydration'
+  short_description?: string;
   description: string;
   price: number;
   stock: number;
   image_url?: string;
   image: string;
   images?: string[];
+  image_urls?: string[];
   is_active?: boolean;
   skinConcern: string[]; // 'Dry Skin' | 'Oily Skin' | 'Acne-Prone' | 'Sensitive Skin' | 'Anti-Aging'
   ingredients: string[];
@@ -29,13 +31,15 @@ export interface Product {
 }
 
 export interface Review {
-  id: string;
-  productId: string;
-  author: string;
+  id?: string;
+  productId?: string;
+  author?: string;
+  name?: string;
   rating: number;
-  comment: string;
-  date: string;
-  verified: boolean;
+  comment?: string;
+  text?: string;
+  date?: string;
+  verified?: boolean;
 }
 
 export interface Article {

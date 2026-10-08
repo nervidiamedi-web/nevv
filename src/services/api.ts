@@ -1,8 +1,9 @@
-import { DBState, Product, Article, Order, QuizAnswers, QuizRecommendation } from '../types';
+import { DBState, Product, Article, Order, QuizAnswers, QuizRecommendation, Review } from '../types';
 import { defaultDatabaseState } from '../data/defaultData';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { toDirectImageUrl, toDirectImageUrls, calculateReviewRating, getProductDirectImages } from '../lib/imageUrl';
 
-const STORAGE_KEY = 'cetaphil_clinical_db_v2';
+const STORAGE_KEY = 'cetaphil_clinical_db_v3';
 
 /**
  * Loads active products directly from Supabase:
@@ -28,31 +29,85 @@ export async function fetchActiveProductsFromSupabase(): Promise<Product[] | nul
     }
 
     if (data && Array.isArray(data) && data.length > 0) {
-      return data.map((item: any) => ({
-        id: String(item.id),
-        slug: item.slug || '',
-        name: item.name || '',
-        category: item.category || 'cleanser',
-        size: item.size || undefined,
-        badge: item.badge || item.tag || undefined,
-        tag: item.badge || item.tag || undefined,
-        description: item.description || '',
-        price: Number(item.price) || 0,
-        stock: Number(item.stock) || 0,
-        image_url: item.image_url || item.image || 'https://i.imgur.com/QexihB2.png',
-        image: item.image_url || item.image || 'https://i.imgur.com/QexihB2.png',
-        images: item.images || [item.image_url || item.image || 'https://i.imgur.com/QexihB2.png'],
-        is_active: item.is_active ?? true,
-        skinConcern: item.skinConcern || ['Sensitive Skin'],
-        ingredients: item.ingredients || ['Niacinamide', 'Panthenol', 'Glycerin'],
-        fullIngredients: item.fullIngredients || '',
-        rating: Number(item.rating) || 5,
-        reviewsCount: Number(item.reviewsCount) || 120,
-        benefits: item.benefits || [],
-        usage: item.usage || '',
-        created_at: item.created_at,
-        updated_at: item.updated_at
-      }));
+      return data.map((item: any) => {
+        // Find default metadata for enriched tabs (skinConcern, ingredients, etc.)
+        const defaultMatch = defaultDatabaseState.products.find(
+          (p) => p.slug === item.slug || p.id === item.id || p.id === item.slug || p.seoUrl === item.slug || p.name?.toLowerCase() === item.name?.toLowerCase()
+        );
+
+        // Lookup curated images for this product from the registry
+        const registryImages = getProductDirectImages(item.slug || item.id || item.name);
+
+        // Determine image URLs:
+        // Prioritize explicit non-null database fields; if null/empty, fall back to registry or defaultMatch
+        let directImages: string[] = [];
+        if (Array.isArray(item.image_urls) && item.image_urls.length > 0) {
+          directImages = toDirectImageUrls(item.image_urls, item.slug || item.id);
+        } else if (item.image_url && typeof item.image_url === 'string' && item.image_url.trim()) {
+          directImages = [toDirectImageUrl(item.image_url, item.slug || item.id)];
+        } else if (registryImages && registryImages.gallery.length > 0) {
+          directImages = registryImages.gallery;
+        } else if (defaultMatch?.images && defaultMatch.images.length > 0) {
+          directImages = toDirectImageUrls(defaultMatch.images, item.slug || item.id);
+        } else if (defaultMatch?.image_urls && defaultMatch.image_urls.length > 0) {
+          directImages = toDirectImageUrls(defaultMatch.image_urls, item.slug || item.id);
+        } else if (defaultMatch?.image) {
+          directImages = [toDirectImageUrl(defaultMatch.image, item.slug || item.id)];
+        } else {
+          directImages = [registryImages?.primary || 'https://i.imgur.com/IxpPRLh.png'];
+        }
+
+        const primaryImage = directImages[0] || (registryImages?.primary || 'https://i.imgur.com/IxpPRLh.png');
+
+        // Parse reviews array safely from jsonb
+        let reviewsList: Review[] = [];
+        if (Array.isArray(item.reviews)) {
+          reviewsList = item.reviews;
+        } else if (typeof item.reviews === 'string') {
+          try {
+            reviewsList = JSON.parse(item.reviews);
+          } catch {}
+        }
+        if (reviewsList.length === 0 && defaultMatch?.reviews) {
+          reviewsList = defaultMatch.reviews;
+        }
+
+        const calculatedRating = reviewsList.length > 0
+          ? calculateReviewRating(reviewsList, Number(item.rating) || 5)
+          : (Number(item.rating) || defaultMatch?.rating || 5);
+
+        return {
+          id: String(item.id || item.slug),
+          slug: item.slug || defaultMatch?.slug || String(item.id),
+          name: item.name || defaultMatch?.name || '',
+          category: item.category || defaultMatch?.category || 'Face Cleanser',
+          size: item.size || defaultMatch?.size || undefined,
+          badge: item.badge || item.tag || defaultMatch?.badge || undefined,
+          tag: item.badge || item.tag || defaultMatch?.badge || undefined,
+          short_description: item.short_description || defaultMatch?.short_description || '',
+          description: item.description || defaultMatch?.description || '',
+          price: Number(item.price) || defaultMatch?.price || 0,
+          stock: item.stock !== undefined && item.stock !== null ? Number(item.stock) : (defaultMatch?.stock || 250),
+          image_urls: directImages,
+          image: primaryImage,
+          image_url: primaryImage,
+          images: directImages,
+          is_active: item.is_active ?? true,
+          reviews: reviewsList,
+          rating: calculatedRating,
+          reviewsCount: reviewsList.length > 0 ? reviewsList.length : (item.reviewsCount || defaultMatch?.reviewsCount || 2),
+          skinConcern: item.skinConcern || defaultMatch?.skinConcern || ['Sensitive Skin'],
+          ingredients: item.ingredients || defaultMatch?.ingredients || ['Niacinamide', 'Panthenol', 'Glycerin'],
+          fullIngredients: item.fullIngredients || defaultMatch?.fullIngredients || '',
+          benefits: item.benefits || defaultMatch?.benefits || [
+            'Clinically proven gentle formula for sensitive skin',
+            'Defends against 5 signs of skin sensitivity'
+          ],
+          usage: item.usage || defaultMatch?.usage || 'Apply as directed on clean skin daily.',
+          created_at: item.created_at,
+          updated_at: item.updated_at
+        };
+      });
     }
   } catch (err) {
     console.warn('Failed to query Supabase products:', err);

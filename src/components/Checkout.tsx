@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { formatLKR } from '../lib/formatters';
+import { toDirectImageUrl } from '../lib/imageUrl';
 
 interface CheckoutProps {
   checkoutItems: CartItem[];
@@ -246,8 +247,9 @@ export default function Checkout({
             {placedOrderDetails.items.map(item => (
               <div key={item.id} className="flex items-center gap-3 text-xs">
                 <img
-                  src={item.image_url || item.product?.image || 'https://i.imgur.com/QexihB2.png'}
+                  src={toDirectImageUrl(item.image_url || item.product?.image, item.id || item.product?.slug || item.name)}
                   alt={item.name}
+                  referrerPolicy="no-referrer"
                   className="w-12 h-12 object-contain rounded-xl border border-gray-100 p-1 bg-white shrink-0"
                 />
                 <div className="flex-grow min-w-0">
@@ -538,7 +540,7 @@ export default function Checkout({
                     
                     {/* Product Image */}
                     <img
-                      src={item.image_url || item.product?.image || 'https://i.imgur.com/QexihB2.png'}
+                      src={toDirectImageUrl(item.image_url || item.product?.image, item.id || item.product?.slug || item.name)}
                       alt={item.name}
                       referrerPolicy="no-referrer"
                       className="w-16 h-16 object-contain rounded-xl border border-gray-100 p-1 bg-white shrink-0"

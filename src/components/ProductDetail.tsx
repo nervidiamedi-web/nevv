@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Product } from '../types';
-import { ChevronLeft, Star, ShoppingCart, HelpCircle, Sparkles, RefreshCw, BookOpen, AlertTriangle, Zap } from 'lucide-react';
+import { ChevronLeft, Star, ShoppingCart, HelpCircle, Sparkles, RefreshCw, BookOpen, AlertTriangle, Zap, FileText } from 'lucide-react';
 import { askAdvisorApi } from '../services/api';
 import { formatLKR } from '../lib/formatters';
+import { toDirectImageUrl, toDirectImageUrls } from '../lib/imageUrl';
 
 interface ProductDetailProps {
   product: Product;
@@ -22,19 +23,31 @@ export default function ProductDetail({
   setCurrentView
 }: ProductDetailProps) {
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState<'benefits' | 'ingredients' | 'usage'>('benefits');
+  const [activeTab, setActiveTab] = useState<'description' | 'benefits' | 'ingredients' | 'usage'>('description');
   
   // Ask AI about this product state
   const [aiQuestion, setAiQuestion] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
   const [aiResponse, setAiResponse] = useState('');
 
-  const [activeImage, setActiveImage] = useState(product.image);
+  // Normalize image gallery with direct CDN links
+  const galleryImages = React.useMemo(() => {
+    const raw = (product.images && product.images.length > 0)
+      ? product.images
+      : (product.image_urls && product.image_urls.length > 0)
+      ? product.image_urls
+      : [product.image || product.image_url];
+    return toDirectImageUrls(raw, product.slug || product.id);
+  }, [product]);
+
+  const [activeImage, setActiveImage] = useState<string>(
+    galleryImages[0] || toDirectImageUrl(product.image || product.image_url, product.slug || product.id)
+  );
 
   // Keep active image updated when the product changes
   React.useEffect(() => {
-    setActiveImage(product.image);
-  }, [product.id, product.image]);
+    setActiveImage(galleryImages[0] || toDirectImageUrl(product.image || product.image_url, product.slug || product.id));
+  }, [product.id, galleryImages, product.image, product.image_url, product.slug]);
 
   // Find related products matching either category or skin concerns
   const relatedProducts = products
@@ -91,9 +104,9 @@ export default function ProductDetail({
           </div>
 
           {/* Thumbnails */}
-          {product.images && product.images.length > 1 && (
+          {galleryImages && galleryImages.length > 1 && (
             <div className="flex gap-2.5 overflow-x-auto pb-1">
-              {product.images.map((imgUrl, index) => (
+              {galleryImages.map((imgUrl, index) => (
                 <button
                   key={index}
                   onClick={() => setActiveImage(imgUrl)}
@@ -118,8 +131,12 @@ export default function ProductDetail({
           <div className="space-y-2">
             <div className="flex flex-wrap gap-2 items-center text-xs text-gray-500 uppercase font-bold tracking-wider">
               <span className="text-[#0082C8]">{product.category}</span>
-              <span>•</span>
-              <span>Target: {product.skinConcern.join(', ')}</span>
+              {product.skinConcern && product.skinConcern.length > 0 && (
+                <>
+                  <span>•</span>
+                  <span>Target: {product.skinConcern.join(', ')}</span>
+                </>
+              )}
             </div>
             
             <h1 className="text-2xl sm:text-3xl font-extrabold text-[#002D62] leading-tight">
@@ -130,15 +147,29 @@ export default function ProductDetail({
             <div className="flex items-center gap-2 pt-1">
               <div className="flex items-center text-amber-500 font-bold text-sm">
                 <Star className="w-4 h-4 fill-amber-400 text-amber-400 mr-1" />
-                <span>{product.rating.toFixed(1)}</span>
+                <span>{(product.rating || 5).toFixed(1)}</span>
               </div>
-              <span className="text-xs text-gray-500">({product.reviewsCount} Dermatologist verified reviews)</span>
+              <span className="text-xs text-gray-500">
+                ({product.reviews?.length || product.reviewsCount || 0} Customer reviews)
+              </span>
             </div>
           </div>
 
-          <p className="text-xs text-gray-600 leading-relaxed">
-            {product.description.replace(/^###.*$/gm, '').trim().substring(0, 240)}...
-          </p>
+          {/* Short Description */}
+          {product.short_description ? (
+            <div className="bg-[#EEF5F9] border-l-4 border-[#0082C8] p-4 rounded-r-2xl space-y-1">
+              <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#0082C8] block">
+                Overview
+              </span>
+              <p className="text-xs text-[#002D62] font-medium leading-relaxed">
+                {product.short_description}
+              </p>
+            </div>
+          ) : (
+            <p className="text-xs text-gray-600 leading-relaxed">
+              {product.description.replace(/^###.*$/gm, '').trim().substring(0, 240)}...
+            </p>
+          )}
 
           {/* Pricing and Stock and Qty */}
           <div className="bg-[#F4F8FA] border border-[#E2EBF1] rounded-2xl p-6 space-y-4">
@@ -148,7 +179,7 @@ export default function ProductDetail({
                 <div className="flex items-baseline gap-2">
                   <p className="text-2xl font-black text-[#002D62]">{formatLKR(product.price)}</p>
                   {product.size && (
-                    <span className="text-xs text-gray-500 font-bold bg-white px-2 py-0.5 rounded-md border border-gray-200">
+                    <span className="text-xs text-gray-600 font-bold bg-white px-2.5 py-0.5 rounded-md border border-gray-200">
                       {product.size}
                     </span>
                   )}
@@ -156,12 +187,12 @@ export default function ProductDetail({
               </div>
               <div>
                 <p className="text-[10px] text-gray-400 uppercase font-bold text-right">Inventory Availability</p>
-                {product.stock === 0 ? (
+                {product.stock <= 0 ? (
                   <span className="text-xs font-bold text-red-500 bg-red-50 px-2.5 py-1 rounded-full border border-red-200">OUT OF STOCK</span>
                 ) : product.stock <= 10 ? (
                   <span className="text-xs font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">LOW STOCK ({product.stock} units)</span>
                 ) : (
-                  <span className="text-xs font-bold text-[#43B02A] bg-[#E6F4EA] px-2.5 py-1 rounded-full border border-[#C8E6C9]">IN STOCK</span>
+                  <span className="text-xs font-bold text-[#43B02A] bg-[#E6F4EA] px-2.5 py-1 rounded-full border border-[#C8E6C9]">IN STOCK ({product.stock} units)</span>
                 )}
               </div>
             </div>
@@ -219,13 +250,21 @@ export default function ProductDetail({
             )}
           </div>
 
-          {/* Tabbed Info (Benefits, Actives, Usage) */}
+          {/* Tabbed Info (Description, Benefits, Actives, Usage) */}
           <div className="border border-[#E2EBF1] rounded-2xl overflow-hidden bg-white shadow-xs">
             {/* Tab navigation */}
-            <div className="flex bg-[#F4F8FA] border-b border-[#E2EBF1] text-xs">
+            <div className="flex bg-[#F4F8FA] border-b border-[#E2EBF1] text-xs overflow-x-auto">
+              <button
+                onClick={() => setActiveTab('description')}
+                className={`flex-1 py-3 px-3 text-center font-bold transition-all cursor-pointer whitespace-nowrap ${
+                  activeTab === 'description' ? 'bg-white text-[#002D62] border-b-2 border-[#0082C8]' : 'text-gray-500 hover:text-gray-900'
+                }`}
+              >
+                Full Description
+              </button>
               <button
                 onClick={() => setActiveTab('benefits')}
-                className={`flex-1 py-3 text-center font-bold transition-all cursor-pointer ${
+                className={`flex-1 py-3 px-3 text-center font-bold transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === 'benefits' ? 'bg-white text-[#002D62] border-b-2 border-[#0082C8]' : 'text-gray-500 hover:text-gray-900'
                 }`}
               >
@@ -233,7 +272,7 @@ export default function ProductDetail({
               </button>
               <button
                 onClick={() => setActiveTab('ingredients')}
-                className={`flex-1 py-3 text-center font-bold transition-all cursor-pointer ${
+                className={`flex-1 py-3 px-3 text-center font-bold transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === 'ingredients' ? 'bg-white text-[#002D62] border-b-2 border-[#0082C8]' : 'text-gray-500 hover:text-gray-900'
                 }`}
               >
@@ -241,7 +280,7 @@ export default function ProductDetail({
               </button>
               <button
                 onClick={() => setActiveTab('usage')}
-                className={`flex-1 py-3 text-center font-bold transition-all cursor-pointer ${
+                className={`flex-1 py-3 px-3 text-center font-bold transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === 'usage' ? 'bg-white text-[#002D62] border-b-2 border-[#0082C8]' : 'text-gray-500 hover:text-gray-900'
                 }`}
               >
@@ -252,24 +291,44 @@ export default function ProductDetail({
             {/* Tab Content panels */}
             <div className="p-5 text-xs text-gray-600 leading-relaxed">
               
+              {activeTab === 'description' && (
+                <div className="space-y-3">
+                  <h4 className="font-bold text-xs text-[#002D62] uppercase tracking-wider flex items-center gap-1.5">
+                    <FileText className="w-4 h-4 text-[#0082C8]" />
+                    Full Product Description
+                  </h4>
+                  <p className="text-xs text-gray-700 leading-relaxed whitespace-pre-line">
+                    {product.description}
+                  </p>
+                </div>
+              )}
+
               {activeTab === 'benefits' && (
                 <ul className="space-y-2.5">
-                  {product.benefits.map((b, idx) => (
-                    <li key={idx} className="flex items-start gap-2">
-                      <span className="text-[#43B02A] font-bold mt-0.5">•</span>
-                      <span>{b}</span>
-                    </li>
-                  ))}
+                  {product.benefits && product.benefits.length > 0 ? (
+                    product.benefits.map((b, idx) => (
+                      <li key={idx} className="flex items-start gap-2">
+                        <span className="text-[#43B02A] font-bold mt-0.5">•</span>
+                        <span>{b}</span>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="text-gray-500">Clinically tested and dermatologist-recommended for sensitive skin.</li>
+                  )}
                 </ul>
               )}
 
               {activeTab === 'ingredients' && (
                 <div className="space-y-3">
-                  <p><span className="font-bold text-[#002D62]">Targeted Actives:</span> {product.ingredients.join(', ')}</p>
-                  <p className="border-t border-gray-100 pt-3">
-                    <span className="font-bold text-[#002D62] block mb-1">Full Formulation List:</span>
-                    <span className="text-gray-400 font-mono text-[10px] block leading-normal leading-relaxed">{product.fullIngredients}</span>
-                  </p>
+                  {product.ingredients && product.ingredients.length > 0 && (
+                    <p><span className="font-bold text-[#002D62]">Targeted Actives:</span> {product.ingredients.join(', ')}</p>
+                  )}
+                  {product.fullIngredients && (
+                    <p className="border-t border-gray-100 pt-3">
+                      <span className="font-bold text-[#002D62] block mb-1">Full Formulation List:</span>
+                      <span className="text-gray-400 font-mono text-[10px] block leading-normal leading-relaxed">{product.fullIngredients}</span>
+                    </p>
+                  )}
                 </div>
               )}
 
@@ -277,7 +336,7 @@ export default function ProductDetail({
                 <div className="space-y-3">
                   <div className="flex gap-2 items-start">
                     <BookOpen className="w-4 h-4 text-[#0082C8] flex-shrink-0 mt-0.5" />
-                    <p>{product.usage}</p>
+                    <p>{product.usage || 'Apply gently onto cleansed skin morning and evening. Avoid direct contact with eyes.'}</p>
                   </div>
                   <p className="text-[10px] text-gray-400 italic border-t border-gray-100 pt-2">
                     *Avoid contact with mucus membranes. If micro-stinging or flaking occurs, limit active introduction steps to alternative evenings.
@@ -366,61 +425,75 @@ export default function ProductDetail({
           
           <div className="flex items-center gap-4 bg-[#F4F8FA] px-4 py-2.5 rounded-2xl border border-[#E2EBF1]">
             <div className="text-center">
-              <span className="block text-2xl font-black text-[#002D62]">5.0</span>
+              <span className="block text-2xl font-black text-[#002D62]">
+                {(product.rating || 5).toFixed(1)}
+              </span>
               <span className="text-[9px] font-bold uppercase text-gray-400 tracking-wider">Out of 5</span>
             </div>
             <div className="h-8 w-[1px] bg-gray-200" />
             <div>
               <div className="flex text-amber-400">
-                {[...Array(5)].map((_, i) => (
+                {[...Array(Math.max(1, Math.min(5, Math.round(product.rating || 5))))].map((_, i) => (
                   <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                 ))}
               </div>
-              <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mt-0.5">{product.reviewsCount} Verified Ratings</span>
+              <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mt-0.5">
+                {product.reviews?.length || product.reviewsCount || 0} Verified Ratings
+              </span>
             </div>
           </div>
         </div>
 
         <div className="space-y-6 divide-y divide-gray-100">
           {product.reviews && product.reviews.length > 0 ? (
-            product.reviews.map((rev) => (
-              <div key={rev.id} className="pt-6 first:pt-0 space-y-2.5">
-                <div className="flex justify-between items-start">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-full bg-[#EEF5F9] text-[#0082C8] font-bold text-xs flex items-center justify-center">
-                        {rev.author.split(' ').map(n => n[0]).join('')}
-                      </div>
-                      <div>
-                        <h4 className="text-xs font-black text-[#002D62]">{rev.author}</h4>
-                        <div className="flex items-center gap-1.5 mt-0.5">
-                          <span className="text-[9px] text-gray-400 font-medium">Sri Lanka</span>
-                          <span className="w-1 h-1 bg-gray-300 rounded-full" />
-                          <span className="text-[9px] text-gray-400 font-medium">{rev.date}</span>
+            product.reviews.map((rev, revIdx) => {
+              const displayName = rev.name || rev.author || 'Verified Customer';
+              const reviewText = rev.text || rev.comment || '';
+              const initials = displayName
+                .split(' ')
+                .map((n: string) => n[0])
+                .filter(Boolean)
+                .join('')
+                .slice(0, 2)
+                .toUpperCase() || 'VC';
+
+              return (
+                <div key={rev.id || `rev-${revIdx}`} className="pt-6 first:pt-0 space-y-2.5">
+                  <div className="flex justify-between items-start">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-full bg-[#EEF5F9] text-[#0082C8] font-bold text-xs flex items-center justify-center border border-[#D1E5F2] shrink-0">
+                          {initials}
+                        </div>
+                        <div>
+                          <h4 className="text-xs font-black text-[#002D62]">{displayName}</h4>
+                          <div className="flex items-center gap-1.5 mt-0.5">
+                            <span className="text-[9px] text-gray-400 font-medium">Sri Lanka</span>
+                            <span className="w-1 h-1 bg-gray-300 rounded-full" />
+                            <span className="text-[9px] text-gray-400 font-medium">{rev.date || 'Verified Review'}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="flex flex-col items-end gap-1">
-                    <div className="flex text-amber-400">
-                      {[...Array(rev.rating)].map((_, i) => (
-                        <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
-                      ))}
-                    </div>
-                    {rev.verified && (
+                    <div className="flex flex-col items-end gap-1">
+                      <div className="flex text-amber-400">
+                        {[...Array(Math.max(1, Math.min(5, Number(rev.rating) || 5)))].map((_, i) => (
+                          <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                        ))}
+                      </div>
                       <span className="text-[8px] font-black uppercase text-[#43B02A] bg-[#E6F4EA] px-2 py-0.5 rounded-full border border-[#C8E6C9] tracking-wider">
-                        Verified Regimen Purchaser
+                        Verified Purchaser
                       </span>
-                    )}
+                    </div>
                   </div>
-                </div>
 
-                <p className="text-xs text-gray-600 leading-relaxed pl-9 font-medium italic">
-                  "{rev.comment}"
-                </p>
-              </div>
-            ))
+                  <p className="text-xs text-gray-700 leading-relaxed pl-10 font-medium whitespace-pre-line">
+                    "{reviewText}"
+                  </p>
+                </div>
+              );
+            })
           ) : (
             <p className="text-xs text-gray-400 py-4">No consumer reviews registered yet for this clinical formulation.</p>
           )}

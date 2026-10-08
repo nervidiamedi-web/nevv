@@ -276,7 +276,7 @@ export default function App() {
   };
 
   // Find currently active product (if view is pdp)
-  const activeProduct = products.find(p => p.id === selectedProductId);
+  const activeProduct = products.find(p => p.id === selectedProductId || p.slug === selectedProductId);
 
   // Active items for the checkout page
   const activeCheckoutItems = checkoutSource === 'buy_now'

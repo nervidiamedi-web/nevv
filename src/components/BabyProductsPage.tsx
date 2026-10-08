@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Product } from '../types';
 import { Heart, Sparkles, ShieldCheck, CheckCircle2, ShoppingCart, Star, Droplets, Baby, Award, ArrowRight, Zap } from 'lucide-react';
 import { formatLKR } from '../lib/formatters';
+import { toDirectImageUrl } from '../lib/imageUrl';
 
 interface BabyProductsPageProps {
   products: Product[];
@@ -277,7 +278,7 @@ export default function BabyProductsPage({
                 {/* Product Image Header with Tag */}
                 <div className="relative aspect-square bg-[#F4F8FA] p-6 flex items-center justify-center overflow-hidden">
                   <img
-                    src={product.image}
+                    src={toDirectImageUrl(product.image_url || product.image)}
                     alt={product.name}
                     className="max-h-full max-w-full object-contain group-hover:scale-108 transition-transform duration-500 cursor-pointer"
                     onClick={() => handleCardClick(product.id)}

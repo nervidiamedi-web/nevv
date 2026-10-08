@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { CartItem } from '../types';
 import { X, Plus, Minus, Trash2, ArrowRight, Percent, ShieldCheck } from 'lucide-react';
 import { formatLKR } from '../lib/formatters';
+import { toDirectImageUrl } from '../lib/imageUrl';
 
 interface CartSidebarProps {
   isOpen: boolean;
@@ -95,7 +96,7 @@ export default function CartSidebar({
               cartItems.map(item => {
                 const itemId = item.id || item.product?.id || '';
                 const itemName = item.name || item.product?.name || '';
-                const itemImg = item.image_url || item.product?.image || 'https://i.imgur.com/QexihB2.png';
+                const itemImg = toDirectImageUrl(item.image_url || item.product?.image, itemId || item.product?.slug || itemName);
                 const itemPrice = item.price || item.product?.price || 0;
                 const itemStock = item.stock || item.product?.stock || 0;
                 const itemCategory = item.product?.category || '';

@@ -3,9 +3,28 @@ import { DBState } from '../types';
 export const defaultDatabaseState: DBState = {
   products: [
     {
-      id: "cet-oily-skin-cleanser-125",
+      id: "cetaphil-oily-skin-cleanser-125ml",
+      slug: "cetaphil-oily-skin-cleanser-125ml",
       name: "Cetaphil Oily Skin Cleanser (125ml)",
-      category: "cleanser",
+      category: "Face Cleanser",
+      size: "125ml",
+      badge: "Bestseller",
+      tag: "Bestseller",
+      short_description: "A gentle, low-lather foaming gel cleanser clinically proven to deep clean pores, remove 99% of excess oil, dirt, and makeup, and improve the appearance of oily, combination, or acne-prone skin without stripping its natural moisture.",
+      description: "Cetaphil Oily Skin Cleanser is specifically formulated for individuals dealing with oily, combination, or acne-prone skin. Enriched with a dermatologist-backed blend of Niacinamide (Vitamin B3), Panthenol (Pro-Vitamin B5), and hydrating Glycerin, this face wash strengthens the skin barrier while preserving its natural moisture. Its non-comedogenic, soap-free, and hypoallergenic formula transforms from a low-lather gel into a soft foam to deep-cleanse pores, eliminate excess sebum, and reduce the appearance of enlarged pores. Clinically tested to defend against the five signs of skin sensitivity—dryness, irritation, roughness, tightness, and a weakened skin barrier—it leaves the skin feeling clean, fresh, balanced, and residue-free. Ideal for daily morning and evening use.",
+      price: 4800,
+      stock: 250,
+      is_active: true,
+      image_urls: [
+        "https://imgur.com/QexihB2",
+        "https://imgur.com/iVPPYxM"
+      ],
+      image: "https://i.imgur.com/QexihB2.png",
+      image_url: "https://i.imgur.com/QexihB2.png",
+      images: [
+        "https://i.imgur.com/QexihB2.png",
+        "https://i.imgur.com/iVPPYxM.png"
+      ],
       skinConcern: [
         "Oily Skin",
         "Acne-Prone",
@@ -17,40 +36,31 @@ export const defaultDatabaseState: DBState = {
         "Hydrating Glycerin"
       ],
       fullIngredients: "Water, Glycerin, PEG-200 Hydrogenated Glyceryl Palmate, Butylene Glycol, Panthenol, Niacinamide, PEG-7 Glyceryl Cocoate, Sodium Laureth Sulfate, Acrylates/C10-30 Alkyl Acrylate Crosspolymer, Sodium Benzoate, Masking Fragrance, Disodium EDTA.",
-      price: 4800,
-      stock: 84,
       rating: 5,
-      reviewsCount: 184,
-      description: "Cetaphil Oily Skin Cleanser is specifically formulated for individuals dealing with oily, combination, or acne-prone skin. Enriched with a dermatologist-backed blend of Niacinamide (Vitamin B3), Panthenol (Pro-Vitamin B5), and hydrating Glycerin, this face wash strengthens the skin barrier while preserving its natural moisture. Its non-comedogenic, soap-free, and hypoallergenic formula transforms from a low-lather gel into a soft foam to deep-cleanse pores, eliminate excess sebum, and reduce the appearance of enlarged pores. Clinically tested to defend against the five signs of skin sensitivity (dryness, irritation, roughness, tightness, and a weakened skin barrier), it leaves the skin feeling clean, fresh, balanced, and completely residue-free. It is ideal for daily morning and evening use.",
+      reviewsCount: 2,
       benefits: [
         "Clinically proven to deep clean pores, remove 99% of excess oil, dirt, and makeup",
         "Strengthens the skin barrier while preserving natural moisture",
         "Defends against 5 signs of skin sensitivity: dryness, irritation, roughness, tightness, weakened barrier",
-        "Low-lather gel into soft foam, non-comedogenic and hypoallergenic"
+        "Low-lather gel transforms into a soft non-comedogenic foam"
       ],
       usage: "Apply to wet skin, massage gently into a low lather, and rinse thoroughly with water. Use daily morning and night.",
-      image: "https://i.imgur.com/QexihB2.png",
-      images: [
-        "https://i.imgur.com/QexihB2.png",
-        "https://i.imgur.com/iVPPYxM.png"
-      ],
-      tag: "Bestseller",
       reviews: [
         {
           id: "rev-1-1",
-          productId: "cet-oily-skin-cleanser-125",
-          author: "Kavindi De Silva",
+          author: "Verified Purchaser",
           rating: 5,
           comment: "Godak hoda product ekak. සති දෙකක් විතර පාවිච්චි කරද්දි ලොකු වෙනසක් පෙනුනා. Face එක fresh පිට තියෙනවා දවසම.",
+          text: "Godak hoda product ekak. සති දෙකක් විතර පාවිච්චි කරද්දි ලොකු වෙනසක් පෙනුනා. Face එක fresh පිට තියෙනවා දවසම.",
           date: "2026-08-14",
           verified: true
         },
         {
           id: "rev-1-2",
-          productId: "cet-oily-skin-cleanser-125",
-          author: "Nishantha Silva",
+          author: "Verified Purchaser",
           rating: 5,
-          comment: "Oily skin එකට ගොඩක් හොඳයි. මූණ සෝදපුවාම තෙල් ගතිය සේරම නැති වෙනවා ඒත් මූණ වේලෙන්නේ (dry) නෑ. Pimples එන එකත් ගොඩක් අඩු වුනා. Highly recommended!",
+          comment: "Oily skin එකට ගොඩක් හොඳයි. මූණ සෝදපුවාම තෙල් ගතිය සේරම නැති වෙනවා ඒත් මූණ වේලෙන්නේ (dry ) නෑ. Pimples එන එකත් ගොඩක් අඩු වුනා. Highly recommended!",
+          text: "Oily skin එකට ගොඩක් හොඳයි. මූණ සෝදපුවාම තෙල් ගතිය සේරම නැති වෙනවා ඒත් මූණ වේලෙන්නේ (dry ) නෑ. Pimples එන එකත් ගොඩක් අඩු වුනා. Highly recommended!",
           date: "2026-08-28",
           verified: true
         }
@@ -60,9 +70,34 @@ export const defaultDatabaseState: DBState = {
       seoUrl: "cetaphil-oily-skin-cleanser-125ml"
     },
     {
-      id: "cet-gentle-skin-cleanser-125",
-      name: "Cetaphil Gentle Skin Cleanser – Gentle Face Wash for Dry Sensitive Skin 125ml",
-      category: "cleanser",
+      id: "cetaphil-gentle-skin-cleanser-125ml",
+      slug: "cetaphil-gentle-skin-cleanser-125ml",
+      name: "Cetaphil Gentle Skin Cleanser - Gentle Face Wash for Dry Sensitive Skin 125ml",
+      category: "Face Cleanser",
+      size: "125ml",
+      badge: "Popular",
+      tag: "Popular",
+      short_description: "A mild soap-free, fragrance-free cleanser that cleanses without irritation. It is pH-balanced, non-comedogenic, and helps retain the skin's natural moisture barrier.",
+      description: "This best-selling cleanser uses Micellar Technology to gently yet effectively remove dirt, makeup, and impurities while providing continuous hydration to protect against dryness. It can be used with or without water and can also serve as a light makeup remover. Dermatologically tested and clinically proven to be gentle on skin. Suitable for sensitive, dry, or normal skin.",
+      price: 3210,
+      stock: 250,
+      is_active: true,
+      image_urls: [
+        "https://imgur.com/IxpPRLh",
+        "https://imgur.com/8S7otzn",
+        "https://imgur.com/hmQjviF",
+        "https://imgur.com/Slx1IRz",
+        "https://imgur.com/3dESHXI"
+      ],
+      image: "https://i.imgur.com/IxpPRLh.png",
+      image_url: "https://i.imgur.com/IxpPRLh.png",
+      images: [
+        "https://i.imgur.com/IxpPRLh.png",
+        "https://i.imgur.com/8S7otzn.png",
+        "https://i.imgur.com/hmQjviF.png",
+        "https://i.imgur.com/Slx1IRz.png",
+        "https://i.imgur.com/3dESHXI.png"
+      ],
       skinConcern: [
         "Dry Skin",
         "Sensitive Skin"
@@ -74,11 +109,8 @@ export const defaultDatabaseState: DBState = {
         "Panthenol (Pro-Vitamin B5)"
       ],
       fullIngredients: "Aqua, Glycerin, Cetearyl Alcohol, Panthenol, Niacinamide, Pantolactone, Xanthan Gum, Sodium Cocoyl Isethionate, Sodium Benzoate, Citric Acid.",
-      price: 3210,
-      stock: 110,
-      rating: 4.9,
-      reviewsCount: 236,
-      description: "This best-selling cleanser uses Micellar Technology to gently yet effectively remove dirt, makeup, and impurities while providing continuous hydration to protect against dryness. It can be used with or without water and even serves as a light makeup remover. Dermatologically tested and clinically proven to be gentle on skin. A mild soap-free, fragrance-free formulation that cleanses without irritation. It is pH-balanced, non-comedogenic, and helps retain the skin's natural moisture barrier. Suitable for sensitive, dry, or normal skin.",
+      rating: 5,
+      reviewsCount: 2,
       benefits: [
         "Micellar Technology gently removes dirt, impurities, and light makeup",
         "Continuous hydration defends against post-wash dryness",
@@ -86,31 +118,22 @@ export const defaultDatabaseState: DBState = {
         "Can be used with or without water"
       ],
       usage: "With water: Apply to skin and gently massage, rinse with water and pat dry. Without water: Apply a liberal amount, gently rub, and wipe off with a soft cloth.",
-      image: "https://i.imgur.com/IxpPRLh.png",
-      images: [
-        "https://i.imgur.com/IxpPRLh.png",
-        "https://i.imgur.com/8S7otzn.png",
-        "https://i.imgur.com/hmQjviF.png",
-        "https://i.imgur.com/Slx1IRz.png",
-        "https://i.imgur.com/3dESHXI.png"
-      ],
-      tag: "Popular",
       reviews: [
         {
           id: "rev-2-1",
-          productId: "cet-gentle-skin-cleanser-125",
-          author: "Dulani Jayasinghe",
+          author: "Verified Purchaser",
           rating: 5,
           comment: "Fast delivery, original product and well packed. I ordered this Cetaphil Gentle Skin Cleanser for the 3rd time and the quality is still perfect. Gentle on skin and worth the price. Highly recommended!",
+          text: "Fast delivery, original product and well packed. I ordered this Cetaphil Gentle Skin Cleanser for the 3rd time and the quality is still perfect. Gentle on skin and worth the price. Highly recommended!",
           date: "2026-08-10",
           verified: true
         },
         {
           id: "rev-2-2",
-          productId: "cet-gentle-skin-cleanser-125",
-          author: "Sanduni Fernando",
+          author: "Verified Purchaser",
           rating: 5,
-          comment: "REALLY FAST DELIVERY.. AND VERY CAREFULLY PACKAGED AND THE PRODUCT ITSELF LOOKS DECENT. THIS IS THE MADE IN INDIAN VERSION I SUPPOSE.. but did some researches and it's good yeah i would say original even though it's not made in canada. I'LL UPDATE AFTER FEW WEEKS OF USING THE PRODUCT",
+          comment: "REALLY FAST DELIVERY.. AND VERY CAREFULLY PACKAGED. The product itself looks decent. This is the made in Indian version I suppose, but I did some research and it is good. I would say it is original even though it is not made in Canada. I'll update after a few weeks of using the product.",
+          text: "REALLY FAST DELIVERY.. AND VERY CAREFULLY PACKAGED. The product itself looks decent. This is the made in Indian version I suppose, but I did some research and it is good. I would say it is original even though it is not made in Canada. I'll update after a few weeks of using the product.",
           date: "2026-08-22",
           verified: true
         }
@@ -120,9 +143,30 @@ export const defaultDatabaseState: DBState = {
       seoUrl: "cetaphil-gentle-skin-cleanser-125ml"
     },
     {
-      id: "cet-daily-facial-cleanser-591",
+      id: "cetaphil-daily-facial-cleanser-591ml",
+      slug: "cetaphil-daily-facial-cleanser-591ml",
       name: "Cetaphil Daily Facial Cleanser 20 fl oz 591ml",
-      category: "cleanser",
+      category: "Face Cleanser",
+      size: "20 fl oz / 591ml",
+      badge: "Canadian Import",
+      tag: "Canadian Import",
+      short_description: "A gentle, soap-free daily facial cleanser designed for sensitive, combination, and oily skin.",
+      description: "Cetaphil Daily Facial Cleanser is a dermatologist-recommended, non-comedogenic cleansing formula specially formulated for sensitive, combination, and oily skin types. Manufactured in Canada, this cleanser removes impurities, surface oils, and everyday buildup without stripping essential moisture. Enriched with Glycerin, Niacinamide (Vitamin B3 ), and Panthenol (Pro-Vitamin B5), it reinforces the natural skin barrier and leaves the face feeling clean, refreshed, and comfortable. Its soap-free formula is suitable for daily morning and evening use. Apply to wet skin, massage gently into a foam, and rinse thoroughly. For external use only. Avoid direct contact with eyes. Store in a cool, dry place.",
+      price: 13500,
+      stock: 250,
+      is_active: true,
+      image_urls: [
+        "https://imgur.com/6dMsLux",
+        "https://imgur.com/0V0aKvE",
+        "https://imgur.com/a/Gqr4XQJ"
+      ],
+      image: "https://i.imgur.com/6dMsLux.png",
+      image_url: "https://i.imgur.com/6dMsLux.png",
+      images: [
+        "https://i.imgur.com/6dMsLux.png",
+        "https://i.imgur.com/0V0aKvE.png",
+        "https://i.imgur.com/Gqr4XQJ.png"
+      ],
       skinConcern: [
         "Sensitive Skin",
         "Oily Skin",
@@ -134,41 +178,31 @@ export const defaultDatabaseState: DBState = {
         "Panthenol (Pro-Vitamin B5)"
       ],
       fullIngredients: "Water, Glycerin, Cocamidopropyl Betaine, Disodium Laureth Sulfosuccinate, Sodium Cocoamphoacetate, Panthenol, Niacinamide, Pantolactone, Acrylates/C10-30 Alkyl Acrylate Crosspolymer, Sodium Benzoate, Masking Fragrance, Sodium Chloride, Citric Acid.",
-      price: 13500,
-      stock: 45,
       rating: 5,
-      reviewsCount: 158,
-      description: "Cetaphil Daily Facial Cleanser (20 fl oz / 591ml) is a dermatologist-recommended, non-comedogenic cleansing formula specially formulated for sensitive, combination to oily skin types. Manufactured in Canada, this cleanser works to deep-cleanse the skin by removing impurities, surface oils, and everyday buildup without stripping away essential moisture. Enriched with a science-backed blend of skin-conditioning ingredients—including hydrating Glycerin, soothing Niacinamide (Vitamin B3), and skin-nourishing Panthenol (Pro-Vitamin B5)—it reinforces the natural skin barrier and leaves the face feeling clean, refreshed, and completely comfortable. Its soap-free composition ensures gentle daily use both morning and night. Volume: 20 fl oz (591ml) | Country of Origin: Canada | Skin Types: Sensitive, Combination, and Oily | Key Ingredients: Glycerin, Niacinamide (Vitamin B3), Panthenol (Vitamin B5). Precautions: For external use only. Avoid direct contact with eyes. Store in a cool, dry place.",
+      reviewsCount: 2,
       benefits: [
         "Super-size 591ml (20 fl oz) Canadian formulation offering lasting value",
-        "Deeply removes surface oils, impurities, and pollution buildup without over-drying",
+        "Deeply removes surface oils, impurities, and everyday buildup without stripping moisture",
         "Reinforces the natural skin barrier with Niacinamide & Panthenol",
         "Soap-free, hypoallergenic, non-comedogenic daily cleanser"
       ],
       usage: "Apply to wet skin, massage gently into a foam, and rinse thoroughly. Suitable for morning and evening routines.",
-      image: "https://i.imgur.com/6dMsLux.png",
-      images: [
-        "https://i.imgur.com/6dMsLux.png",
-        "https://i.imgur.com/0V0aKvE.png",
-        "https://i.imgur.com/Gqr4XQJ.png"
-      ],
-      tag: "Canadian Import",
       reviews: [
         {
           id: "rev-3-1",
-          productId: "cet-daily-facial-cleanser-591",
-          author: "Roshan Alwis",
+          author: "Verified Purchaser",
           rating: 5,
           comment: "The best cleanser for oily, sensitive skin! I've been using this Cetaphil cleanser for over a month, and it's a game changer. It removes all the excess oil and daily dirt without leaving my skin feeling tight or dry. The 591ml bottle lasts a really long time, making it great value for money.",
+          text: "The best cleanser for oily, sensitive skin! I've been using this Cetaphil cleanser for over a month, and it's a game changer. It removes all the excess oil and daily dirt without leaving my skin feeling tight or dry. The 591ml bottle lasts a really long time, making it great value for money.",
           date: "2026-08-05",
           verified: true
         },
         {
           id: "rev-3-2",
-          productId: "cet-daily-facial-cleanser-591",
-          author: "Chamari Senanayake",
+          author: "Verified Purchaser",
           rating: 5,
           comment: "සංවේදී සමට ඉතාම සුදුසු සෝදන නිපැයුමක්! තෙල් සහිත සහ මගේ වගේ sensitivity තියෙන සමකට මේක ගොඩක් හොදයි. මූණ හුඟක් වියළෙන්නේ නැතුව ලස්සනට පිරිසිදු වෙනවා. දිනපතා පාවිච්චි කරන්න බය නැතුව ගන්න පුළුවන් හොදම product එකක්.",
+          text: "සංවේදී සමට ඉතාම සුදුසු සෝදන නිපැයුමක්! තෙල් සහිත සහ මගේ වගේ sensitivity තියෙන සමකට මේක ගොඩක් හොදයි. මූණ හුඟක් වියළෙන්නේ නැතුව ලස්සනට පිරිසිදු වෙනවා. දිනපතා පාවිච්චි කරන්න බය නැතුව ගන්න පුළුවන් හොදම product එකක්.",
           date: "2026-08-19",
           verified: true
         }
@@ -178,9 +212,30 @@ export const defaultDatabaseState: DBState = {
       seoUrl: "cetaphil-daily-facial-cleanser-591ml"
     },
     {
-      id: "cet-moisturizing-cream-85",
+      id: "cetaphil-moisturizing-cream-85g",
+      slug: "cetaphil-moisturizing-cream-85g",
       name: "Cetaphil Moisturizing Cream Very Dry To Normal Skin 85g",
-      category: "cream",
+      category: "Moisturizer",
+      size: "85g",
+      badge: "Derm-Fav",
+      tag: "Derm-Fav",
+      short_description: "A rich, dermatologist-recommended cream that provides deep, long-lasting hydration for dry to very dry, sensitive skin.",
+      description: "Cetaphil Moisturizing Cream 85g is a rich, clinically proven formula created to provide intensive hydration wherever the skin needs it most. Designed for normal to dry, sensitive skin, this fragrance-free and non-greasy cream instantly soothes and moisturizes the face, hands, feet, knees, elbows, and other dry areas. It absorbs quickly without leaving a greasy residue and is suitable for daily use. It is lanolin-free and formulated without common irritants. Suitable for daily dry skin care and sensitive skin.",
+      price: 5200,
+      stock: 250,
+      is_active: true,
+      image_urls: [
+        "https://imgur.com/7Ffa5wT",
+        "https://imgur.com/ckg9mOL",
+        "https://imgur.com/1hfncF3"
+      ],
+      image: "https://i.imgur.com/7Ffa5wT.png",
+      image_url: "https://i.imgur.com/7Ffa5wT.png",
+      images: [
+        "https://i.imgur.com/7Ffa5wT.png",
+        "https://i.imgur.com/ckg9mOL.png",
+        "https://i.imgur.com/1hfncF3.png"
+      ],
       skinConcern: [
         "Dry Skin",
         "Sensitive Skin"
@@ -193,41 +248,31 @@ export const defaultDatabaseState: DBState = {
         "Glycerin"
       ],
       fullIngredients: "Aqua, Glycerin, Petrolatum, Dicaprylyl Ether, Dimethicone, Glyceryl Stearate, Cetyl Alcohol, Helianthus Annuus Seed Oil, Peg-30 Stearate, Panthenol, Niacinamide, Prunus Amygdalus Dulcis Oil, Tocopherol, Tocopheryl Acetate, Pantolactone, Acrylates/C10-30 Alkyl Acrylate Crosspolymer, Carbomer, Propylene Glycol, BHT, Disodium EDTA, Benzyl Alcohol, Phenoxyethanol, Sodium Hydroxide, Citric Acid.",
-      price: 5200,
-      stock: 70,
-      rating: 4.9,
-      reviewsCount: 192,
-      description: "Cetaphil Moisturizing Cream (80g / 85g) is a luxurious, clinically proven formula specially created to deliver daily intensive hydration wherever your skin needs it most. Designed specifically for normal to dry, sensitive skin types, this rich cream provides instant moisture relief that lasts, making it ideal for daily use on the face, hands, feet, knees, and elbows. Formulated without lanolin, fragrances, or other common irritants, this extra-gentle cream absorbs quickly without leaving a greasy residue behind. Because of its exceptionally mild and non-irritating formula, it is frequently recommended by dermatologists and is especially helpful in managing skin conditions such as eczema and psoriasis. Whether used morning, night, or throughout the day, it works to restore and protect your skin's natural moisture barrier.",
+      rating: 5,
+      reviewsCount: 2,
       benefits: [
         "Deep, long-lasting hydration for dry to very dry sensitive skin",
         "Fragrance-free, lanolin-free, non-comedogenic, non-greasy fast absorption",
-        "Ideal for face, hands, elbows, knees, eczema, and psoriasis care",
+        "Ideal for face, hands, elbows, knees, and sensitive dry skin care",
         "Dermatologist-recommended skin lipid barrier repair"
       ],
       usage: "Apply liberally to face and body as often as needed, especially after bathing or washing.",
-      image: "https://i.imgur.com/1hfncF3.png",
-      images: [
-        "https://i.imgur.com/1hfncF3.png",
-        "https://i.imgur.com/7Ffa5wT.png",
-        "https://i.imgur.com/ckg9mOL.png"
-      ],
-      tag: "Derm-Fav",
       reviews: [
         {
           id: "rev-4-1",
-          productId: "cet-moisturizing-cream-85",
-          author: "Ashan Wickramasinghe",
+          author: "Verified Purchaser",
           rating: 5,
           comment: "Unbelievable hydration for ultra-sensitive skin! This cream saved my severely dry patches. It feels rich without being overly heavy, and within a few days, my skin barrier felt completely healed. Love that it has no fragrance or harsh ingredients.",
+          text: "Unbelievable hydration for ultra-sensitive skin! This cream saved my severely dry patches. It feels rich without being overly heavy, and within a few days, my skin barrier felt completely healed. Love that it has no fragrance or harsh ingredients.",
           date: "2026-08-11",
           verified: true
         },
         {
           id: "rev-4-2",
-          productId: "cet-moisturizing-cream-85",
-          author: "Nimalka Rajapaksha",
+          author: "Verified Purchaser",
           rating: 5,
           comment: "වියළි සමට තියෙන හොඳම cream එකක්! මගේ සම ගොඩක් dry වෙනවා. මේ cream එක පාවිච්චි කරන්න පටන් ගත්තට පස්සේ සම ගොඩක් සිනිඳු වුණා. Sensitive skin තියෙන අයටත් කිසිම අතුරු ආබාධයක් නැතුව පාවිච්චි කරන්න පුළුවන් ඉතාම හොඳ product එකක්.",
+          text: "වියළි සමට තියෙන හොඳම cream එකක්! මගේ සම ගොඩක් dry වෙනවා. මේ cream එක පාවිච්චි කරන්න පටන් ගත්තට පස්සේ සම ගොඩක් සිනිඳු වුණා. Sensitive skin තියෙන අයටත් කිසිම අතුරු ආබාධයක් නැතුව පාවිච්චි කරන්න පුළුවන් ඉතාම හොඳ product එකක්.",
           date: "2026-08-25",
           verified: true
         }
@@ -237,9 +282,32 @@ export const defaultDatabaseState: DBState = {
       seoUrl: "cetaphil-moisturizing-cream-85g"
     },
     {
-      id: "cet-moisturizing-cream-453",
+      id: "cetaphil-moisturizing-cream-453g",
+      slug: "cetaphil-moisturizing-cream-453g",
       name: "Cetaphil Moisturizing Cream Dry to Very Dry Skin 453g",
-      category: "cream",
+      category: "Moisturizer",
+      size: "453g",
+      badge: "Mega Size",
+      tag: "Mega Size",
+      short_description: "A rich, non-greasy cream clinically proven to provide immediate and long-lasting 48-hour hydration while restoring the skin's natural moisture barrier.",
+      description: "Cetaphil Moisturizing Cream Dry to Very Dry Skin 453g is formulated to provide long-lasting hydration while restoring the skin's natural barrier. It is clinically proven to provide immediate and long-lasting 48-hour relief for dry to very dry, sensitive skin. The fragrance-free and paraben-free formula is suitable for daily use on the face and body. Apply liberally after cleansing and patting the skin dry. Use as often as needed. Key ingredients include Aqua, Glycerin, Petrolatum, Dicaprylyl Ether, Dimethicone, Glyceryl Stearate, Cetyl Alcohol, Sunflower Seed Oil, Panthenol, Niacinamide, Almond Oil, Tocopherol, and other supporting ingredients.",
+      price: 10800,
+      stock: 250,
+      is_active: true,
+      image_urls: [
+        "https://imgur.com/Uqn2O2G",
+        "https://imgur.com/8sIeirH",
+        "https://imgur.com/EKxqjk2",
+        "https://imgur.com/7g9tPAY"
+      ],
+      image: "https://i.imgur.com/Uqn2O2G.png",
+      image_url: "https://i.imgur.com/Uqn2O2G.png",
+      images: [
+        "https://i.imgur.com/Uqn2O2G.png",
+        "https://i.imgur.com/8sIeirH.png",
+        "https://i.imgur.com/EKxqjk2.png",
+        "https://i.imgur.com/7g9tPAY.png"
+      ],
       skinConcern: [
         "Dry Skin",
         "Sensitive Skin"
@@ -252,42 +320,33 @@ export const defaultDatabaseState: DBState = {
         "Panthenol"
       ],
       fullIngredients: "Aqua, Glycerin, Petrolatum, Dicaprylyl Ether, Dimethicone, Glyceryl Stearate, Cetyl Alcohol, Helianthus Annuus Seed Oil, Peg-30 Stearate, Panthenol, Niacinamide, Prunus Amygdalus Dulcis Oil, Tocopherol, Tocopheryl Acetate, Pantolactone, Dimethiconol, Acrylates/C10-30 Alkyl Acrylate Crosspolymer, Carbomer, Propylene Glycol, Bht, Disodium Edta, Benzyl Alcohol, Phenoxyethanol, Sodium Hydroxide, Citric Acid.",
-      price: 10800,
-      stock: 55,
       rating: 5,
-      reviewsCount: 310,
-      description: "Cetaphil Moisturizing Cream Dry to Very Dry Skin 453g is formulated to provide long-lasting hydration while restoring the skin's natural barrier. Clinically proven to provide immediate and long-lasting 48-hour relief for dry to very dry, sensitive skin, leaving it soft and smooth. Helps restore the skin's natural moisture barrier; hydrates and repairs dry, sensitive skin; clinically proven 48 hours of hydration; fragrance-free and paraben-free; suitable for daily use on face and body; gentle, won't irritate the skin.",
+      reviewsCount: 2,
       benefits: [
         "Clinically proven 48 hours of continuous barrier hydration",
         "Restores the skin's natural moisture barrier from first application",
         "Fragrance-free, paraben-free, hypoallergenic large 453g tub",
         "Suitable for daily use across face, body, elbows, and knees"
       ],
-      usage: "Apply liberally to face and body after cleansing and patting dry. Use as often as needed.",
-      image: "https://i.imgur.com/Uqn2O2G.png",
-      images: [
-        "https://i.imgur.com/Uqn2O2G.png",
-        "https://i.imgur.com/8sIeirH.png",
-        "https://i.imgur.com/EKxqjk2.png",
-        "https://i.imgur.com/7g9tPAY.png"
-      ],
-      tag: "Mega Size",
+      usage: "Apply liberally after cleansing and patting the skin dry. Use as often as needed.",
       reviews: [
         {
           id: "rev-5-1",
-          productId: "cet-moisturizing-cream-453",
-          author: "Preshila De Silva",
+          name: "Preshila De silva",
+          author: "Preshila De silva",
           rating: 5,
-          comment: "ඔයාලා මං order කරපු product එකම ඉක්මනින්ම මට deliver කරලා තිබුනා... ඒ වගේම ඒක ලැබුනට පස්සෙත් call කරලා හොද customer service එකක් දුන්නා... ඒක ගොඩක් වටිනවා",
+          comment: "ඔයාලා මං order කරපු product එකම ඉක්මනින්ම මට deliver කරලා තිබුනා...👍 ඒ වගේම ඒක ලැබුනට පස්සෙත් call කරලා හොද customer service එකක් දුන්නා...ඒක ගොඩක් වටිනවා 🥰",
+          text: "ඔයාලා මං order කරපු product එකම ඉක්මනින්ම මට deliver කරලා තිබුනා...👍 ඒ වගේම ඒක ලැබුනට පස්සෙත් call කරලා හොද customer service එකක් දුන්නා...ඒක ගොඩක් වටිනවා 🥰",
           date: "2026-08-01",
           verified: true
         },
         {
           id: "rev-5-2",
-          productId: "cet-moisturizing-cream-453",
+          name: "Mihiri Weerasinghe",
           author: "Mihiri Weerasinghe",
           rating: 5,
-          comment: "Your customer service is so friendly. The products gave me such great results, and I'm honestly so happy with my experience. Thank you",
+          comment: "Your customer service is so friendly. The products gave me such great results, and I'm honestly so happy with my experience. Thank you ✨",
+          text: "Your customer service is so friendly. The products gave me such great results, and I'm honestly so happy with my experience. Thank you ✨",
           date: "2026-08-16",
           verified: true
         }
@@ -297,9 +356,30 @@ export const defaultDatabaseState: DBState = {
       seoUrl: "cetaphil-moisturizing-cream-453g"
     },
     {
-      id: "cet-sun-spf50-light-gel-50",
-      name: "Cetaphil Sun SPF 50+ Light Gel – High Protection Sunscreen for Sensitive Skin 50ml",
-      category: "sunscreen",
+      id: "cetaphil-sun-spf-50-light-gel-50ml",
+      slug: "cetaphil-sun-spf-50-light-gel-50ml",
+      name: "Cetaphil Sun SPF 50+ Light Gel - High Protection Sunscreen for Sensitive Skin 50ml",
+      category: "Sunscreen",
+      size: "50ml",
+      badge: "SPF 50+ High Defense",
+      tag: "SPF 50+ High Defense",
+      short_description: "A lightweight, fast-absorbing SPF 50+ gel sunscreen that provides broad-spectrum UVA, UVB, and infrared protection while nourishing the skin with Vitamin E.",
+      description: "Cetaphil Sun SPF 50+ Light Gel delivers very high sun protection for indoor and outdoor exposure. This gel-based sunscreen is lightweight, fast-absorbing, water-resistant, sweat-resistant, non-comedogenic, hypoallergenic, and dermatologically tested. It is suitable for all skin types, including sensitive skin. Enriched with Vitamin E, it hydrates the skin and helps protect against sunburn, redness, premature aging, roughness, and skin darkening. Unscented. Apply generously and evenly to the face, neck, hands, and feet 15–20 minutes before sun exposure. Reapply every two hours when outdoors, swimming, or sweating heavily.",
+      price: 10400,
+      stock: 250,
+      is_active: true,
+      image_urls: [
+        "https://imgur.com/Tf2OUmd",
+        "https://imgur.com/01Rpycp",
+        "https://imgur.com/zYrM2YF"
+      ],
+      image: "https://i.imgur.com/Tf2OUmd.png",
+      image_url: "https://i.imgur.com/Tf2OUmd.png",
+      images: [
+        "https://i.imgur.com/Tf2OUmd.png",
+        "https://i.imgur.com/01Rpycp.png",
+        "https://i.imgur.com/zYrM2YF.png"
+      ],
       skinConcern: [
         "Sensitive Skin",
         "Dry Skin",
@@ -313,53 +393,66 @@ export const defaultDatabaseState: DBState = {
         "Ethylhexyl Triazone"
       ],
       fullIngredients: "Aqua, Ethylhexyl Methoxycinnamate, Alcohol, C12-15 Alkyl Benzoate, Diethylamino Hydroxybenzoyl Hexyl Benzoate, Bis-Ethylhexyloxyphenol Methoxyphenyl Triazine, Dibutyl Adipate, Titanium Dioxide, Dimethicone, VP/Eicosene Copolymer, Cyclodextrin, Tocopherol, Polyglyceryl-2 Dipolyhydroxystearate, Silica, Decyl Glucoside, Triethanolamine, Xanthan Gum, Acrylates/C10-30 Alkyl Acrylate Crosspolymer, Lauryl Glucoside, BHT, Glucose.",
-      price: 10400,
-      stock: 60,
-      rating: 4.9,
-      reviewsCount: 145,
-      description: "Cetaphil Sun SPF 50+ Light Gel delivers very high sun protection for both indoor and outdoor exposure. Formulated with a blend of physical and chemical filters, this gel-based sunscreen glides seamlessly onto the skin without leaving a sticky or greasy residue. Water and sweat-resistant, non-comedogenic, hypoallergenic, and dermatologically tested — suitable for all skin types, including sensitive skin. Enriched with Vitamin E, it hydrates and strengthens the skin barrier while defending against sunburns, redness, premature aging, roughness, and skin darkening. Net Quantity: 50ml | Scent: Unscented.",
+      rating: 5,
+      reviewsCount: 2,
       benefits: [
-        "SPF 50+ broad-spectrum UVA, UVB, and Infrared radiation defense",
+        "SPF 50+ broad-spectrum UVA, UVB, and infrared radiation defense",
         "Light gel texture with zero white cast and no greasy residue",
         "Water and sweat resistant for up to 4 hours",
         "Enriched with nourishing Vitamin E for sensitive skin barrier protection"
       ],
-      usage: "Apply generously and evenly to face, neck, hands, and feet 15–20 minutes before sun exposure. Reapply every two hours when outdoors, swimming, or sweating heavily.",
-      image: "https://i.imgur.com/Tf2OUmd.png",
-      images: [
-        "https://i.imgur.com/Tf2OUmd.png",
-        "https://i.imgur.com/01Rpycp.png",
-        "https://i.imgur.com/zYrM2YF.png"
-      ],
-      tag: "SPF 50+ High Defense",
+      usage: "Apply generously and evenly to the face, neck, hands, and feet 15–20 minutes before sun exposure. Reapply every two hours when outdoors, swimming, or sweating heavily.",
       reviews: [
         {
           id: "rev-6-1",
-          productId: "cet-sun-spf50-light-gel-50",
-          author: "Tharindu Bandara",
+          author: "Verified Purchaser",
           rating: 5,
           comment: "මේ sunscreen එක ඇත්තටම ගොඩක් හොඳයි. ගෑවට පස්සේ තෙල් ගතියක් හෝ ඇලෙන ගතියක් කොහෙත්ම දැනෙන්නේ නැහැ. මගේ sensitive skin එකට කිසිම අසාත්මිකතාවයක් ආවේ නෑ.",
+          text: "මේ sunscreen එක ඇත්තටම ගොඩක් හොඳයි. ගෑවට පස්සේ තෙල් ගතියක් හෝ ඇලෙන ගතියක් කොහෙත්ම දැනෙන්නේ නැහැ. මගේ sensitive skin එකට කිසිම අසාත්මිකතාවයක් ආවේ නෑ.",
           date: "2026-08-04",
           verified: true
         },
         {
           id: "rev-6-2",
-          productId: "cet-sun-spf50-light-gel-50",
-          author: "Sithara Abeyratne",
+          author: "Verified Purchaser",
           rating: 5,
           comment: "Absolutely love the light gel texture! It blends completely clear without leaving any white cast, sits great under makeup, and gives solid sun protection throughout the day.",
+          text: "Absolutely love the light gel texture! It blends completely clear without leaving any white cast, sits great under makeup, and gives solid sun protection throughout the day.",
           date: "2026-08-20",
           verified: true
         }
       ],
       metaTitle: "Cetaphil Sun SPF 50+ Light Gel 50ml - Sri Lanka",
       metaDescription: "Very high SPF 50+ broad spectrum UV & Infrared defense. Light non-greasy gel for sensitive Sri Lankan skin.",
-      seoUrl: "cetaphil-sun-spf50-light-gel-50ml"
+      seoUrl: "cetaphil-sun-spf-50-light-gel-50ml"
     },
     {
-      id: "cet-dam-lotion-100",
-      name: "Cetaphil DAM Lotion – Ultra Hydrating Deep Moisturizing Body Lotion 100g",
-      category: "cream",
+      id: "cetaphil-dam-lotion-100g",
+      slug: "cetaphil-dam-lotion-100g",
+      name: "Cetaphil DAM Lotion - Ultra Hydrating Deep Moisturizing Body Lotion 100g",
+      category: "Body Lotion",
+      size: "100g",
+      badge: "Intense Hydration",
+      tag: "Intense Hydration",
+      short_description: "A clinically proven ultra-hydrating daily lotion designed to replenish, nourish, and protect continuously dry and sensitive skin for up to 48 hours.",
+      description: "Cetaphil DAM Daily Advance Ultra Hydrating Lotion is an advanced, fragrance-free moisturizing formula for dry to very dry, sensitive skin. It contains Shea Butter, Niacinamide, Panthenol, Glycerin, Sunflower Oil, Macadamia Nut Oil, and Vitamin E. The lotion helps replenish the skin's natural lipid barrier and lock in moisture. It is non-greasy, fast-absorbing, hypoallergenic, non-comedogenic, fragrance-free, paraben-free, sulphate-free, and dermatologically tested for sensitive skin. Ideal for daily use on the face and body.",
+      price: 5400,
+      stock: 250,
+      is_active: true,
+      image_urls: [
+        "https://imgur.com/WU1LTFZ",
+        "https://imgur.com/LTjqjnM",
+        "https://imgur.com/E7QHfUB",
+        "https://imgur.com/iwEwnHr"
+      ],
+      image: "https://i.imgur.com/WU1LTFZ.png",
+      image_url: "https://i.imgur.com/WU1LTFZ.png",
+      images: [
+        "https://i.imgur.com/WU1LTFZ.png",
+        "https://i.imgur.com/LTjqjnM.png",
+        "https://i.imgur.com/E7QHfUB.png",
+        "https://i.imgur.com/iwEwnHr.png"
+      ],
       skinConcern: [
         "Dry Skin",
         "Sensitive Skin"
@@ -372,11 +465,8 @@ export const defaultDatabaseState: DBState = {
         "Vitamin E"
       ],
       fullIngredients: "Aqua, Glycerin, Hydrogenated Polyisobutene, Cetearyl Alcohol, Macadamia Integrifolia Seed Oil (Macadamia Nut Oil), Butyrospermum Parkii Butter (Shea Butter), Cyclopentasiloxane, Tocopheryl Acetate, Panthenol, Sodium Polyacrylate, Phospholipids, Helianthus Annuus Seed Oil, Ceteareth-20, Stearyl Alcohol, Cetyl Alcohol, Stearoxytrimethylsilane, Sodium PCA, Citric Acid, Disodium EDTA, Benzyl Alcohol, Phenoxyethanol.",
-      price: 5400,
-      stock: 90,
-      rating: 4.8,
-      reviewsCount: 167,
-      description: "Cetaphil DAM Daily Advance Ultra Hydrating Lotion is an advanced, fragrance-free moisturizing formula for dry to very dry, sensitive skin. Powered by a 5-ingredient complex (Shea Butter, Niacinamide, Panthenol, Glycerin, Sunflower Oil, plus Macadamia Nut Oil and Vitamin E), it instantly replenishes the skin's natural lipid barrier and locks in moisture. Clinically tested for continuous hydration and comfort from a single application; rich yet non-greasy, absorbs quickly. Formula Safety: Fragrance-Free, Paraben-Free, Sulphate-Free, Hypoallergenic, Non-Comedogenic, Dermatologically tested. Ideal For: Dry, very dry, and sensitive skin — daily face and body use.",
+      rating: 5,
+      reviewsCount: 2,
       benefits: [
         "5-ingredient lipid complex with Shea Butter & Macadamia Nut Oil",
         "Locks in moisture for up to 48 hours without clogging pores",
@@ -384,30 +474,22 @@ export const defaultDatabaseState: DBState = {
         "Instant replenishment for continuously dry, flaky skin"
       ],
       usage: "Apply daily to face and body as often as needed. Optimal right after shower or bath to lock in hydration.",
-      image: "https://i.imgur.com/WU1LTFZ.png",
-      images: [
-        "https://i.imgur.com/WU1LTFZ.png",
-        "https://i.imgur.com/LTjqjnM.png",
-        "https://i.imgur.com/E7QHfUB.png",
-        "https://i.imgur.com/iwEwnHr.png"
-      ],
-      tag: "Intense Hydration",
       reviews: [
         {
           id: "rev-7-1",
-          productId: "cet-dam-lotion-100",
-          author: "Kusal Gunaratne",
+          author: "Verified Purchaser",
           rating: 5,
-          comment: "මගේ තියෙන්නේ ගොඩක් dry skin එකක්. මේ lotion එක පාවිච්චි කරන්න ගත්තට පස්සේ සම හොඳටම soft වුණා... Highly recommend කරනවා!",
+          comment: "මගේ තියෙන්නේ ගොඩක් dry skin එකක්. මේ lotion එක පාවිච්චි කරන්න ගත්තට පස්සේ සම හොඳටම soft වුණා. ගෑවට පස්සේ තෙල් ගතියක් හිටින්නේ නැති නිසා දවස පුරාම කිසිම අපහසුවක් නැතුව ඉන්න පුළුවන්. Highly recommend කරනවා!",
+          text: "මගේ තියෙන්නේ ගොඩක් dry skin එකක්. මේ lotion එක පාවිච්චි කරන්න ගත්තට පස්සේ සම හොඳටම soft වුණා. ගෑවට පස්සේ තෙල් ගතියක් හිටින්නේ නැති නිසා දවස පුරාම කිසිම අපහසුවක් නැතුව ඉන්න පුළුවන්. Highly recommend කරනවා!",
           date: "2026-08-08",
           verified: true
         },
         {
           id: "rev-7-2",
-          productId: "cet-dam-lotion-100",
-          author: "Dinithi Samarasekera",
+          author: "Verified Purchaser",
           rating: 5,
           comment: "This lotion is a lifesaver for chronically dry, flaky skin. It absorbs very quickly without feeling greasy or heavy, and it keeps my skin fully hydrated all day long without causing any breakouts.",
+          text: "This lotion is a lifesaver for chronically dry, flaky skin. It absorbs very quickly without feeling greasy or heavy, and it keeps my skin fully hydrated all day long without causing any breakouts.",
           date: "2026-08-23",
           verified: true
         }
@@ -418,8 +500,13 @@ export const defaultDatabaseState: DBState = {
     },
     {
       id: "cet-baby-daily-lotion-400",
+      slug: "cetaphil-baby-daily-lotion-400ml",
       name: "Cetaphil Baby Daily Lotion – Hydrating Baby Body Lotion with Shea Butter & Olive Oil 400ml",
       category: "baby",
+      size: "400ml",
+      badge: "Pediatrician Choice",
+      tag: "Pediatrician Choice",
+      short_description: "Specially formulated to soothe, moisturize, and protect a baby's delicate and sensitive skin from dryness around the clock with Organic Calendula, Shea Butter, and Olive Oil.",
       skinConcern: [
         "Sensitive Skin",
         "Dry Skin",
@@ -434,7 +521,7 @@ export const defaultDatabaseState: DBState = {
       ],
       fullIngredients: "Aqua, Helianthus Annuus Seed Oil, Sorbitol, Polyglyceryl-3 Diisostearate, Isopropyl Palmitate, Octyldodecanol, Glycerin, Panthenol, Hexyldecanol, Hexyldecyl Laurate, Butyrospermum Parkii Butter, Caprylyl Glycol, Carbomer, Citric Acid, Dimethicone, Dipropylene Glycol, Disodium Cocoyl Glutamate, Glyceryl Caprylate, Glycine Soja Oil, Heliotropine, Olea Europaea Fruit Oil, Parfum, Propylene Glycol, Sodium Hydroxide, Tocopherol.",
       price: 8950,
-      stock: 50,
+      stock: 250,
       rating: 5,
       reviewsCount: 178,
       description: "Specially formulated to soothe, moisturize, and protect a baby's delicate and sensitive skin from dryness around the clock. Dermatologist tested and clinically proven gentle for newborn and toddler skin; blends organic calendula extract with sweet almond oil, sunflower seed oil, and Vitamin E. Lightweight, non-greasy, absorbs quickly, hydrated for up to 24 hours. Formula Safety: Hypoallergenic, free from harsh chemicals/parabens/colorants, dermatologically tested, pediatrician recommended. Volume: 400ml | Directions: Apply daily onto baby's face and body, massaging until absorbed. Best used right after bath time.",
@@ -446,13 +533,19 @@ export const defaultDatabaseState: DBState = {
       ],
       usage: "Apply daily onto baby's face and body, massaging gently until fully absorbed. Best applied right after bath time to seal in moisture.",
       image: "https://i.imgur.com/5not0r2.png",
+      image_url: "https://i.imgur.com/5not0r2.png",
+      image_urls: [
+        "https://imgur.com/5not0r2",
+        "https://imgur.com/Y6MqQmH",
+        "https://imgur.com/7Ok6f5V",
+        "https://imgur.com/4UCc09l"
+      ],
       images: [
         "https://i.imgur.com/5not0r2.png",
         "https://i.imgur.com/Y6MqQmH.png",
         "https://i.imgur.com/7Ok6f5V.png",
         "https://i.imgur.com/4UCc09l.png"
       ],
-      tag: "Pediatrician Choice",
       reviews: [
         {
           id: "rev-8-1",
@@ -479,8 +572,13 @@ export const defaultDatabaseState: DBState = {
     },
     {
       id: "cet-baby-calendula-lotion-400",
+      slug: "cetaphil-baby-calendula-lotion-400ml",
       name: "Cetaphil Baby Daily Moisturizing Lotion with Organic Calendula – Gentle Hydrating Baby Lotion 400ml",
       category: "baby",
+      size: "400ml",
+      badge: "Organic Calendula",
+      tag: "Organic Calendula",
+      short_description: "Provides 24-hour hydration, nourishment, and barrier protection for delicate baby skin with Organic Calendula, Sweet Almond Oil, and Shea Butter.",
       skinConcern: [
         "Sensitive Skin",
         "Dry Skin",
@@ -496,7 +594,7 @@ export const defaultDatabaseState: DBState = {
       ],
       fullIngredients: "Aqua, Sorbitol, Helianthus Annuus Seed Oil, Isopropyl Palmitate, Octyldodecanol, Polyglyceryl-3 Diisostearate, Glycerin, Panthenol, Butyrospermum Parkii Butter, Hexyldecanol, Hexyldecyl Laurate, Prunus Amygdalus Dulcis Oil, Calendula Officinalis Flower Extract, Caprylyl Glycol, Carbomer, Dipropylene Glycol, Disodium Cocoyl Glutamate, Glyceryl Caprylate, Glycine Soja Oil, Heliotropine, Pantolactone, Parfum, Propylene Glycol, Sodium Hydroxide, Tocopherol.",
       price: 9900,
-      stock: 40,
+      stock: 250,
       rating: 5,
       reviewsCount: 205,
       description: "Provides 24-hour hydration, nourishment, and barrier protection for delicate baby skin. Blends calming organic calendula flower extract with sweet almond oil, sunflower oil, and shea butter; enriched with Vitamin E and Pro-Vitamin B5. Absorbs rapidly, non-sticky. Dermatologically tested, hypoallergenic, safe from Day 1. Formula Safety: Paraben-Free, Alcohol-Free, Mineral Oil-Free, Hypoallergenic. Specs: Net Quantity 400ml | Scent: Almond | Skin Type: All skin types, Sensitive | Key Ingredients: Sunflower Oil, Sweet Almond Oil, Calendula Flower Extract, Shea Butter, Vitamin E, Vitamin B5 (Panthenol), Glycerin.",
@@ -508,6 +606,14 @@ export const defaultDatabaseState: DBState = {
       ],
       usage: "Pour into hands, warm gently by rubbing palms together, and apply smoothly all over baby's face and body. Avoid direct contact with eyes.",
       image: "https://i.imgur.com/HPN0BfO.png",
+      image_url: "https://i.imgur.com/HPN0BfO.png",
+      image_urls: [
+        "https://imgur.com/HPN0BfO",
+        "https://imgur.com/hgwfgL3",
+        "https://imgur.com/oNtihl5",
+        "https://imgur.com/eCQxLEd",
+        "https://imgur.com/3NY1yBx"
+      ],
       images: [
         "https://i.imgur.com/HPN0BfO.png",
         "https://i.imgur.com/hgwfgL3.png",
@@ -515,7 +621,6 @@ export const defaultDatabaseState: DBState = {
         "https://i.imgur.com/eCQxLEd.png",
         "https://i.imgur.com/3NY1yBx.png"
       ],
-      tag: "Organic Calendula",
       reviews: [
         {
           id: "rev-9-1",
@@ -542,8 +647,13 @@ export const defaultDatabaseState: DBState = {
     },
     {
       id: "cet-baby-shampoo-200",
+      slug: "cetaphil-baby-shampoo-200ml",
       name: "Cetaphil Baby Shampoo 200ml",
       category: "baby",
+      size: "200ml",
+      badge: "Tear-Free",
+      tag: "Tear-Free",
+      short_description: "Specially formulated to gently cleanse a baby's delicate hair and scalp with natural soothing Chamomile, Wheat Proteins, and Aloe Vera.",
       skinConcern: [
         "Sensitive Skin",
         "Baby & Infant Care"
@@ -556,7 +666,7 @@ export const defaultDatabaseState: DBState = {
       ],
       fullIngredients: "Aqua, Sorbitol, Cocamidopropyl Betaine, Lauryl Glucoside, Glycerin, Panthenol, Coco-Glucoside, Glyceryl Oleate, Acrylates/C10-30 Alkyl Acrylate Crosspolymer, Aloe Barbadensis Leaf Juice Powder, Chamomilla Recutita Flower Extract, Citric Acid, Heliotropine, Hydrogenated Palm Glycerides Citrate, Hydrolyzed Wheat Protein, Parfum, Sodium Hydroxide, Tocopherol, Zinc Sulfate.",
       price: 5850,
-      stock: 65,
+      stock: 250,
       rating: 4.9,
       reviewsCount: 164,
       description: "Specially formulated to gently cleanse a baby's delicate hair and scalp. Pediatrician-recommended, tear-free shampoo for a soothing bath time, leaving hair soft, manageable, and comfortable. A gentle, pediatrician-recommended formula for a baby's delicate scalp and hair. Enriched with natural soothing chamomile extract, cleanses without stripping essential natural moisture. Tear-free formula, gentle cleansing, sensitive-scalp friendly, chamomile extract, and a soothing 6-step wash routine.",
@@ -568,13 +678,19 @@ export const defaultDatabaseState: DBState = {
       ],
       usage: "Wet baby's hair with warm water. Apply a small amount to hair and scalp, gently lather, and rinse thoroughly with water.",
       image: "https://i.imgur.com/Wm9vTlr.png",
+      image_url: "https://i.imgur.com/Wm9vTlr.png",
+      image_urls: [
+        "https://imgur.com/Wm9vTlr",
+        "https://imgur.com/mx6Utqy",
+        "https://imgur.com/j5wbDu7",
+        "https://imgur.com/DNdogMN"
+      ],
       images: [
         "https://i.imgur.com/Wm9vTlr.png",
         "https://i.imgur.com/mx6Utqy.png",
         "https://i.imgur.com/j5wbDu7.png",
         "https://i.imgur.com/DNdogMN.png"
       ],
-      tag: "Tear-Free",
       reviews: [
         {
           id: "rev-10-1",
