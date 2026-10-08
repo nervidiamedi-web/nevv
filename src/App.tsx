@@ -10,7 +10,6 @@ import SkinQuiz from './components/SkinQuiz';
 import AIConsult from './components/AIConsult';
 import BlogSection from './components/BlogSection';
 import SkincareTipsPage from './components/SkincareTipsPage';
-import CMSAdmin from './components/CMSAdmin';
 import CartSidebar from './components/CartSidebar';
 import Checkout from './components/Checkout';
 import UserDashboard from './components/UserDashboard';
@@ -130,19 +129,6 @@ export default function App() {
     }
   };
 
-  // CMS Handlers
-  const handleUpdateProducts = (updatedProducts: Product[]) => {
-    setProducts(updatedProducts);
-  };
-
-  const handleUpdateArticles = (updatedArticles: Article[]) => {
-    setArticles(updatedArticles);
-  };
-
-  const handleUpdatePromo = (updatedPromo: { text: string; visible: boolean }) => {
-    setPromoBanner(updatedPromo);
-  };
-
   // Find currently active product (if view is pdp)
   const activeProduct = products.find(p => p.id === selectedProductId);
 
@@ -252,17 +238,6 @@ export default function App() {
             products={products}
             setCurrentView={setCurrentView}
             setSelectedProductId={setSelectedProductId}
-          />
-        )}
-
-        {currentView === 'admin' && (
-          <CMSAdmin
-            products={products}
-            articles={articles}
-            promoBanner={promoBanner}
-            onUpdateProducts={handleUpdateProducts}
-            onUpdateArticles={handleUpdateArticles}
-            onUpdatePromo={handleUpdatePromo}
           />
         )}
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Product } from '../types';
-import { Search, ShoppingCart, User, Menu, X, Sparkles, HelpCircle, ShieldCheck, Heart } from 'lucide-react';
+import { Search, ShoppingCart, User, Menu, X, Sparkles, HelpCircle, Heart } from 'lucide-react';
 
 interface HeaderProps {
   currentView: string;
@@ -139,17 +139,6 @@ export default function Header({
             >
               <HelpCircle className="w-4.5 h-4.5 text-[#0082C8]" />
               AI Consult
-            </button>
-            <button
-              onClick={() => handleNavClick('admin')}
-              className={`text-sm font-semibold transition-all duration-200 py-1 border-b-2 flex items-center gap-1 ${
-                currentView === 'admin'
-                  ? 'border-[#002D62] text-[#002D62] font-bold'
-                  : 'border-transparent text-gray-400 hover:text-gray-900'
-              }`}
-            >
-              <ShieldCheck className="w-4.5 h-4.5" />
-              CMS Admin
             </button>
           </nav>
 
@@ -292,15 +281,6 @@ export default function Header({
             >
               <HelpCircle className="w-4 h-4 text-[#0082C8]" />
               AI Consultant
-            </button>
-            <button
-              onClick={() => handleNavClick('admin')}
-              className={`text-left text-sm py-2 px-3 rounded-lg flex items-center gap-2 ${
-                currentView === 'admin' ? 'bg-gray-100 text-gray-900 font-bold' : 'text-gray-500 hover:bg-gray-50'
-              }`}
-            >
-              <ShieldCheck className="w-4 h-4" />
-              CMS Admin Panel
             </button>
           </div>
         </div>
