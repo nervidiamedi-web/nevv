@@ -54,24 +54,33 @@ export const PRODUCT_IMAGE_REGISTRY: Record<string, { primary: string; gallery: 
     ]
   },
   'cetaphil-moisturizing-cream-85g': {
-    primary: 'https://i.imgur.com/7Ffa5wT.png',
+    primary: 'https://i.imgur.com/1hfncF3.png',
     gallery: [
+      'https://i.imgur.com/1hfncF3.png',
       'https://i.imgur.com/7Ffa5wT.png',
-      'https://i.imgur.com/ckg9mOL.png',
-      'https://i.imgur.com/1hfncF3.png'
+      'https://i.imgur.com/ckg9mOL.png'
     ]
   },
   'cet-moisturizing-cream-85': {
-    primary: 'https://i.imgur.com/7Ffa5wT.png',
+    primary: 'https://i.imgur.com/1hfncF3.png',
     gallery: [
+      'https://i.imgur.com/1hfncF3.png',
       'https://i.imgur.com/7Ffa5wT.png',
-      'https://i.imgur.com/ckg9mOL.png',
-      'https://i.imgur.com/1hfncF3.png'
+      'https://i.imgur.com/ckg9mOL.png'
+    ]
+  },
+  'cetaphil-moisturizing-cream-very-dry-to-normal-skin': {
+    primary: 'https://i.imgur.com/1hfncF3.png',
+    gallery: [
+      'https://i.imgur.com/1hfncF3.png',
+      'https://i.imgur.com/7Ffa5wT.png',
+      'https://i.imgur.com/ckg9mOL.png'
     ]
   },
   'cetaphil-moisturizing-cream-453g': {
-    primary: 'https://i.imgur.com/Uqn2O2G.png',
+    primary: 'https://i.imgur.com/OUSWZFX.png',
     gallery: [
+      'https://i.imgur.com/OUSWZFX.png',
       'https://i.imgur.com/Uqn2O2G.png',
       'https://i.imgur.com/8sIeirH.png',
       'https://i.imgur.com/EKxqjk2.png',
@@ -79,8 +88,19 @@ export const PRODUCT_IMAGE_REGISTRY: Record<string, { primary: string; gallery: 
     ]
   },
   'cet-moisturizing-cream-453': {
-    primary: 'https://i.imgur.com/Uqn2O2G.png',
+    primary: 'https://i.imgur.com/OUSWZFX.png',
     gallery: [
+      'https://i.imgur.com/OUSWZFX.png',
+      'https://i.imgur.com/Uqn2O2G.png',
+      'https://i.imgur.com/8sIeirH.png',
+      'https://i.imgur.com/EKxqjk2.png',
+      'https://i.imgur.com/7g9tPAY.png'
+    ]
+  },
+  'cetaphil-moisturizing-cream-dry-to-very-dry-skin': {
+    primary: 'https://i.imgur.com/OUSWZFX.png',
+    gallery: [
+      'https://i.imgur.com/OUSWZFX.png',
       'https://i.imgur.com/Uqn2O2G.png',
       'https://i.imgur.com/8sIeirH.png',
       'https://i.imgur.com/EKxqjk2.png',
@@ -259,6 +279,17 @@ export function toDirectImageUrl(url: string | undefined | null, productIdentifi
         return correctImages.primary;
       }
     }
+  }
+
+  // Specific album and image mapping requested by user
+  if (trimmed.includes('PRBLm6f')) {
+    return 'https://i.imgur.com/OUSWZFX.png';
+  }
+  if (trimmed.includes('1hfncF3')) {
+    return 'https://i.imgur.com/1hfncF3.png';
+  }
+  if (trimmed.includes('ubdzYUt') || trimmed.includes('u04vmdz')) {
+    return 'https://i.imgur.com/u04vmdz.png';
   }
 
   // Already a direct i.imgur.com CDN link with extension

@@ -144,8 +144,8 @@ VALUES
     5200,
     250,
     true,
-    ARRAY['https://i.imgur.com/7Ffa5wT.png', 'https://i.imgur.com/ckg9mOL.png', 'https://i.imgur.com/1hfncF3.png'],
-    'https://i.imgur.com/7Ffa5wT.png',
+    ARRAY['https://i.imgur.com/1hfncF3.png', 'https://i.imgur.com/7Ffa5wT.png', 'https://i.imgur.com/ckg9mOL.png'],
+    'https://i.imgur.com/1hfncF3.png',
     '[
       {
         "rating": 5,
@@ -171,8 +171,8 @@ VALUES
     10800,
     250,
     true,
-    ARRAY['https://i.imgur.com/Uqn2O2G.png', 'https://i.imgur.com/8sIeirH.png', 'https://i.imgur.com/EKxqjk2.png', 'https://i.imgur.com/7g9tPAY.png'],
-    'https://i.imgur.com/Uqn2O2G.png',
+    ARRAY['https://i.imgur.com/OUSWZFX.png', 'https://i.imgur.com/Uqn2O2G.png', 'https://i.imgur.com/8sIeirH.png', 'https://i.imgur.com/EKxqjk2.png', 'https://i.imgur.com/7g9tPAY.png'],
+    'https://i.imgur.com/OUSWZFX.png',
     '[
       {
         "name": "Preshila De silva",
@@ -343,8 +343,8 @@ DO UPDATE SET
 UPDATE public.products SET image_url = 'https://i.imgur.com/QexihB2.png', image_urls = ARRAY['https://i.imgur.com/QexihB2.png', 'https://i.imgur.com/iVPPYxM.png'] WHERE slug = 'cetaphil-oily-skin-cleanser-125ml';
 UPDATE public.products SET image_url = 'https://i.imgur.com/IxpPRLh.png', image_urls = ARRAY['https://i.imgur.com/IxpPRLh.png', 'https://i.imgur.com/8S7otzn.png', 'https://i.imgur.com/hmQjviF.png', 'https://i.imgur.com/Slx1IRz.png', 'https://i.imgur.com/3dESHXI.png'] WHERE slug = 'cetaphil-gentle-skin-cleanser-125ml';
 UPDATE public.products SET image_url = 'https://i.imgur.com/6dMsLux.png', image_urls = ARRAY['https://i.imgur.com/6dMsLux.png', 'https://i.imgur.com/0V0aKvE.png', 'https://i.imgur.com/Gqr4XQJ.png'] WHERE slug = 'cetaphil-daily-facial-cleanser-591ml';
-UPDATE public.products SET image_url = 'https://i.imgur.com/7Ffa5wT.png', image_urls = ARRAY['https://i.imgur.com/7Ffa5wT.png', 'https://i.imgur.com/ckg9mOL.png', 'https://i.imgur.com/1hfncF3.png'] WHERE slug = 'cetaphil-moisturizing-cream-85g';
-UPDATE public.products SET image_url = 'https://i.imgur.com/Uqn2O2G.png', image_urls = ARRAY['https://i.imgur.com/Uqn2O2G.png', 'https://i.imgur.com/8sIeirH.png', 'https://i.imgur.com/EKxqjk2.png', 'https://i.imgur.com/7g9tPAY.png'] WHERE slug = 'cetaphil-moisturizing-cream-453g';
+UPDATE public.products SET image_url = 'https://i.imgur.com/1hfncF3.png', image_urls = ARRAY['https://i.imgur.com/1hfncF3.png', 'https://i.imgur.com/7Ffa5wT.png', 'https://i.imgur.com/ckg9mOL.png'] WHERE slug = 'cetaphil-moisturizing-cream-85g';
+UPDATE public.products SET image_url = 'https://i.imgur.com/OUSWZFX.png', image_urls = ARRAY['https://i.imgur.com/OUSWZFX.png', 'https://i.imgur.com/Uqn2O2G.png', 'https://i.imgur.com/8sIeirH.png', 'https://i.imgur.com/EKxqjk2.png', 'https://i.imgur.com/7g9tPAY.png'] WHERE slug = 'cetaphil-moisturizing-cream-453g';
 UPDATE public.products SET image_url = 'https://i.imgur.com/Tf2OUmd.png', image_urls = ARRAY['https://i.imgur.com/Tf2OUmd.png', 'https://i.imgur.com/01Rpycp.png', 'https://i.imgur.com/zYrM2YF.png'] WHERE slug = 'cetaphil-sun-spf-50-light-gel-50ml';
 UPDATE public.products SET image_url = 'https://i.imgur.com/WU1LTFZ.png', image_urls = ARRAY['https://i.imgur.com/WU1LTFZ.png', 'https://i.imgur.com/LTjqjnM.png', 'https://i.imgur.com/E7QHfUB.png', 'https://i.imgur.com/iwEwnHr.png'] WHERE slug = 'cetaphil-dam-lotion-100g';
 UPDATE public.products SET image_url = 'https://i.imgur.com/5not0r2.png', image_urls = ARRAY['https://i.imgur.com/5not0r2.png', 'https://i.imgur.com/Y6MqQmH.png', 'https://i.imgur.com/7Ok6f5V.png', 'https://i.imgur.com/4UCc09l.png'] WHERE slug = 'cetaphil-baby-daily-lotion-400ml';

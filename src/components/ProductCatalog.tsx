@@ -3,6 +3,7 @@ import { Product } from '../types';
 import { SlidersHorizontal, Sparkles, Filter, ShoppingCart, RefreshCw, Star, Quote, CheckCircle, X, Zap } from 'lucide-react';
 import { formatLKR } from '../lib/formatters';
 import { toDirectImageUrl } from '../lib/imageUrl';
+import SensitiveSkinHeroSection from './SensitiveSkinHeroSection';
 
 interface ProductCatalogProps {
   products: Product[];
@@ -55,6 +56,16 @@ export default function ProductCatalog({
       });
   }, [products, selectedConcern, selectedCategory, maxPrice, sortBy]);
 
+  // Featured product for Oily Skin Showcase
+  const oilyProduct = useMemo(() => {
+    return products.find(p => 
+      p.slug === 'cetaphil-oily-skin-cleanser-125ml' ||
+      p.id === 'cetaphil-oily-skin-cleanser-125ml' ||
+      p.slug?.includes('oily') ||
+      p.name.toLowerCase().includes('oily')
+    ) || products[0];
+  }, [products]);
+
   const handleCardClick = (id: string) => {
     setSelectedProductId(id);
     setCurrentView('pdp');
@@ -70,154 +81,19 @@ export default function ProductCatalog({
   return (
     <div>
       
-      {/* 1. CLINICAL HERO SECTION */}
-      <section className="relative overflow-hidden bg-gradient-to-r from-[#EEF5F9] via-[#F4F8FA] to-white border-b border-[#E2EBF1] py-14 sm:py-18 px-4 sm:px-6 lg:px-8">
-        <div className="relative max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          
-          <div className="space-y-6">
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold text-[#43B02A] bg-[#E6F4EA] border border-[#C8E6C9] uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5" />
-              #1 Doctor Recommended Sensitive Skincare Brand
-            </span>
-            <h1 className="text-4xl sm:text-5xl font-extrabold text-[#002D62] tracking-tight leading-tight">
-              We Defend Against <br />
-              <span className="text-[#0082C8]">5 Signs of Skin Sensitivity</span>
-            </h1>
-            <p className="text-gray-600 text-sm sm:text-base max-w-lg leading-relaxed">
-              Cetaphil is clinically proven to strengthen and protect sensitive skin. Formulated with dermatologist-backed blends of Niacinamide, Panthenol, and Hydrating Glycerin to defend your moisture barrier.
-            </p>
-            <div className="flex flex-wrap gap-4 pt-1">
-              <button
-                onClick={() => {
-                  const el = document.getElementById('catalog-grid-start');
-                  el?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="px-7 py-3.5 bg-[#0082C8] hover:bg-[#006EA8] text-white font-bold text-xs uppercase tracking-wider rounded-full shadow-md transition-all cursor-pointer"
-              >
-                Shop All Products
-              </button>
-              <button
-                onClick={() => {
-                  setCurrentView('quiz');
-                }}
-                className="px-7 py-3.5 bg-white hover:bg-[#EEF5F9] text-[#002D62] border-2 border-[#002D62] font-bold text-xs uppercase tracking-wider rounded-full transition-all cursor-pointer"
-              >
-                Take the Skin Quiz
-              </button>
-            </div>
-          </div>
-
-          {/* Right graphics */}
-          <div className="hidden lg:block relative">
-            <img
-              src="https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&q=80&w=1200"
-              alt="Cetaphil Formulations"
-              className="w-full h-[360px] object-cover rounded-3xl border border-[#E2EBF1] shadow-xl"
-            />
-            {/* Overlay badge */}
-            <div className="absolute -bottom-6 -left-6 bg-white border border-[#E2EBF1] p-5 rounded-2xl shadow-xl space-y-2 max-w-xs">
-              <div className="flex items-center gap-1.5 text-[#43B02A] text-xs font-bold">
-                <CheckCircle className="w-4 h-4" />
-                <span>Clinically Tested</span>
-              </div>
-              <p className="text-xs font-extrabold text-[#002D62]">Defends the Skin Barrier</p>
-              <p className="text-[10px] text-gray-500 leading-relaxed">
-                Buffered with essential skin lipids to nourish without clogging pores or disrupting pH.
-              </p>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* 2. SIGNATURE CETAPHIL FEATURE: 5 SIGNS OF SKIN SENSITIVITY */}
-      <section className="bg-white border-b border-[#E2EBF1] py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center max-w-2xl mx-auto space-y-2 mb-8">
-            <span className="text-[11px] font-bold uppercase tracking-widest text-[#0082C8]">
-              The Cetaphil Promise
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#002D62] tracking-tight">
-              Defends Against 5 Signs of Skin Sensitivity
-            </h2>
-            <p className="text-xs sm:text-sm text-gray-600">
-              Every Cetaphil formula is tested to help restore balance and protect your skin against everyday stressors:
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
-            {[
-              {
-                title: "Weakened Barrier",
-                concern: "Sensitive Skin",
-                desc: "Strengthens moisture barrier",
-                icon: "🛡️"
-              },
-              {
-                title: "Dryness",
-                concern: "Dry Skin",
-                desc: "Delivers 48h deep hydration",
-                icon: "💧"
-              },
-              {
-                title: "Irritation",
-                concern: "Sensitive Skin",
-                desc: "Soothes visible redness",
-                icon: "🌿"
-              },
-              {
-                title: "Roughness",
-                concern: "Rough & Bumpy",
-                desc: "Smoothes texture gently",
-                icon: "✨"
-              },
-              {
-                title: "Tightness",
-                concern: "Dry Skin",
-                desc: "Restores skin elasticity",
-                icon: "💆"
-              }
-            ].map((sign, idx) => (
-              <button
-                key={idx}
-                onClick={() => {
-                  setSelectedConcern(sign.concern);
-                  const el = document.getElementById('catalog-grid-start');
-                  el?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className={`p-4 rounded-2xl border text-center transition-all cursor-pointer group flex flex-col items-center justify-between ${
-                  selectedConcern === sign.concern
-                    ? 'bg-[#EEF5F9] border-[#0082C8] ring-2 ring-[#0082C8]/20 shadow-sm'
-                    : 'bg-white border-[#E2EBF1] hover:border-[#0082C8] hover:shadow-xs'
-                }`}
-              >
-                <div className="text-2xl mb-2 group-hover:scale-110 transition-transform">
-                  {sign.icon}
-                </div>
-                <h4 className="text-xs font-bold text-[#002D62] group-hover:text-[#0082C8] transition-colors mb-1">
-                  {sign.title}
-                </h4>
-                <p className="text-[10px] text-gray-500 leading-tight mb-2">
-                  {sign.desc}
-                </p>
-                <span className="text-[9px] font-bold text-[#0082C8] group-hover:underline">
-                  Target this sign →
-                </span>
-              </button>
-            ))}
-          </div>
-
-          <div className="mt-6 text-center">
-            <button
-              onClick={() => { setCurrentView('tips'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0082C8] hover:text-[#002D62] bg-[#EEF5F9] hover:bg-[#D1E5F2] px-5 py-2.5 rounded-full transition-all cursor-pointer shadow-2xs"
-            >
-              <span>Explore Dermatologist Skincare Tips &amp; Routines for All 5 Signs</span>
-              <span>→</span>
-            </button>
-          </div>
-        </div>
-      </section>
+      {/* DERMATOLOGIST-RECOMMENDED CLINICAL BRAND SECTION (CETAPHIL US INSPIRED) */}
+      <SensitiveSkinHeroSection
+        onCategorySelect={(cat) => setSelectedCategory(cat)}
+        onShopNow={() => {
+          const el = document.getElementById('catalog-grid-start');
+          el?.scrollIntoView({ behavior: 'smooth' });
+        }}
+        onFindProducts={() => {
+          setCurrentView('quiz');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        onSelectConcern={(concern) => setSelectedConcern(concern)}
+      />
 
       {/* 3. MAIN CATALOG SEGMENT */}
       <div id="catalog-grid-start" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -710,10 +586,13 @@ export default function ProductCatalog({
             {/* Right Column: Visual Showcase */}
             <div className="lg:col-span-6 relative rounded-3xl overflow-hidden shadow-xl aspect-[4/3] group bg-gray-900">
               <img
-                src="/src/assets/images/skincare_serum_showcase_1783263757157.jpg"
+                src="https://i.imgur.com/MaN4IE9.jpeg"
                 alt="Advanced Defense &amp; Repair and Renew Serum"
                 className="w-full h-full object-cover opacity-90 group-hover:scale-103 transition-transform duration-700"
                 referrerPolicy="no-referrer"
+                onError={(e) => {
+                  e.currentTarget.src = "/src/assets/images/advanced_defense_serum_hero.jpg";
+                }}
               />
               {/* Overlay with radial vignette and bottom gradient */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
@@ -745,241 +624,159 @@ export default function ProductCatalog({
           </div>
         </section>
 
-        {/* 4. AHA BHA MIRACLE RENEWAL SECTION (CETAPHIL SERIES) */}
+        {/* 4. TARGETED OILY SKIN DEFENSE & CARE SHOWCASE */}
         <section className="mt-20 pt-16 border-t border-[#E2EBF1]">
-          
-          {/* Banner Container */}
-          <div className="relative rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-r from-[#002D62] via-[#003B71] to-[#0082C8] text-white">
-            {/* Absolute background image for right side with gradient overlay */}
-            <div className="absolute inset-0 opacity-25 lg:opacity-35 select-none pointer-events-none">
-              <img
-                src="/src/assets/images/cetaphil_series_banner_1783264816600.jpg"
-                alt="Cetaphil AHA BHA Miracle Renewal background"
-                className="w-full h-full object-cover object-center"
-                referrerPolicy="no-referrer"
-              />
-            </div>
-            {/* Radial glow to blend the image seamlessly */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#002D62]/90 via-transparent to-transparent lg:bg-gradient-to-r lg:from-[#002D62] lg:via-[#002D62]/70 lg:to-transparent" />
+          <div className="bg-gradient-to-br from-[#F4F9FD] via-white to-[#EBF4FA] rounded-3xl border border-[#D5E6F2] p-6 sm:p-10 lg:p-14 shadow-sm overflow-hidden relative">
+            {/* Subtle decorative background glow */}
+            <div className="absolute -top-24 -right-24 w-96 h-96 bg-[#0082C8]/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-[#43B02A]/10 rounded-full blur-3xl pointer-events-none" />
 
-            {/* Banner Content */}
-            <div className="relative z-10 max-w-2xl px-6 py-12 sm:py-16 lg:py-20 lg:pl-16 space-y-6">
-              <div className="flex flex-wrap gap-2">
-                <span className="px-3 py-1 text-[8px] font-extrabold text-white bg-[#43B02A] rounded-full tracking-widest uppercase">
-                  New Release
-                </span>
-                <span className="px-3 py-1 text-[8px] font-extrabold text-white bg-black/40 backdrop-blur-sm rounded-full tracking-widest uppercase">
-                  Dermatologist Recommended
-                </span>
-              </div>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
               
-              <div className="space-y-2">
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-none text-white font-sans uppercase">
-                  AHA · BHA
-                </h2>
-                <h3 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-none font-sans uppercase">
-                  Miracle Renewal
-                </h3>
-              </div>
-              
-              <p className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-[#E6F4EA] font-sans">
-                Get Smooth, Glowing and Youthful Skin
-              </p>
-
-              <p className="text-blue-100/90 text-xs sm:text-sm leading-relaxed max-w-lg font-medium">
-                Experience gentle corrective renewal engineered with physiological skin lipid protection. Our advanced multi-acid exfoliating system speeds up cellular turnover without triggering redness or barrier dryness.
-              </p>
-
-              <div className="flex gap-3 pt-2">
-                <button
-                  onClick={() => {
-                    const el = document.getElementById('aha-bha-series-grid');
-                    el?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className="px-7 py-3.5 bg-white hover:bg-[#EEF5F9] text-[#002D62] font-extrabold text-[10px] sm:text-xs uppercase tracking-wider rounded-full transition-all shadow-md cursor-pointer"
+              {/* Left Column: Image Showcase from user URL https://imgur.com/a/ubdzYUt */}
+              <div className="lg:col-span-6 order-2 lg:order-1">
+                <div 
+                  onClick={() => oilyProduct && handleCardClick(oilyProduct.id)}
+                  className="relative rounded-3xl overflow-hidden shadow-xl bg-white border border-[#E2EBF1] group cursor-pointer aspect-square sm:aspect-[4/3] lg:aspect-square flex items-center justify-center p-4 sm:p-6"
                 >
-                  Explore the Series
-                </button>
-              </div>
-            </div>
-          </div>
+                  <img
+                    src="https://i.imgur.com/u04vmdz.png"
+                    alt="Cetaphil Oily Skin Cleanser - Deep Cleansing &amp; Barrier Defense for Oily Skin"
+                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                    referrerPolicy="no-referrer"
+                  />
 
-          {/* Series Divider */}
-          <div className="flex items-center my-12" id="aha-bha-series-grid">
-            <div className="flex-grow border-t border-gray-200"></div>
-            <span className="px-6 text-[10px] sm:text-xs font-black uppercase tracking-[0.3em] text-[#002D62]">
-              AHA BHA Series
-            </span>
-            <div className="flex-grow border-t border-gray-200"></div>
-          </div>
-
-          {/* 4-Product Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {(products.filter(p => p.id.startsWith('cet-'))?.length > 0 ? products.filter(p => p.id.startsWith('cet-')) : [
-              {
-                id: "cet-aha-cleanser",
-                name: "Cetaphil AHA Daily Exfoliating Cleanser",
-                category: "cleanser",
-                skinConcern: ["Sensitive Skin", "Dry Skin", "Oily Skin"],
-                ingredients: ["Glycolic Acid (AHA)", "Salicylic Acid (BHA)", "Glycerin", "Niacinamide"],
-                price: 18.99,
-                stock: 40,
-                rating: 4.8,
-                reviewsCount: 142,
-                description: "A gentle yet powerful daily face wash formulated with Glycolic and Salicylic acids to gently exfoliate dead skin, sweep away dirt, and refine pores without stripping natural hydration.",
-                image: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&q=80&w=800",
-                tag: "Sale 17% Off",
-                originalPrice: 22.99
-              },
-              {
-                id: "cet-bha-toner",
-                name: "Cetaphil BHA Pore Refining Toner",
-                category: "exfoliant",
-                skinConcern: ["Oily Skin", "Acne-Prone"],
-                ingredients: ["Salicylic Acid (2% BHA)", "Green Tea Hydrosol", "Centella Asiatica"],
-                price: 21.50,
-                stock: 35,
-                rating: 4.7,
-                reviewsCount: 98,
-                description: "An advanced, leave-on clinical liquid toner packed with 2% Salicylic Acid to penetrate deep into pore walls, break down blackheads, and control excess face shine.",
-                image: "https://images.unsplash.com/photo-1612817288484-6f916006741a?auto=format&fit=crop&q=80&w=800",
-                tag: "Sale 14% Off",
-                originalPrice: 24.99
-              },
-              {
-                id: "cet-aha-serum",
-                name: "Cetaphil AHA Miracle Renewal Serum",
-                category: "serum",
-                skinConcern: ["Anti-Aging", "Sensitive Skin", "Dry Skin"],
-                ingredients: ["Glycolic Acid", "Lactic Acid", "Salicylic Acid", "Hyaluronic Acid"],
-                price: 28.00,
-                stock: 50,
-                rating: 4.9,
-                reviewsCount: 220,
-                description: "An intensive clinical multi-acid serum formulated specifically to speed cellular turnover, fade dark spots, and smooth rough texture for a glowing, pristine complexion.",
-                image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80&w=800",
-                tag: "Sale 20% Off",
-                originalPrice: 35.00
-              },
-              {
-                id: "cet-exf-cream",
-                name: "Cetaphil Hydrating Exfoliating Cream",
-                category: "cream",
-                skinConcern: ["Dry Skin", "Sensitive Skin"],
-                ingredients: ["Lactic Acid", "Ceramide NP", "Squalane", "Shea Butter"],
-                price: 24.99,
-                stock: 25,
-                rating: 4.8,
-                reviewsCount: 112,
-                description: "A luxurious multi-lipid recovery cream containing mild Lactic Acid. It moisturizes dry patches for 48 hours while executing microscopic surface exfoliation.",
-                image: "https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?auto=format&fit=crop&q=80&w=800",
-                tag: "Sale 16% Off",
-                originalPrice: 29.99
-              }
-            ]).map((prod: any) => {
-              const originalPrice = prod.originalPrice || (prod.price / 0.8).toFixed(2);
-              return (
-                <div
-                  key={prod.id}
-                  className="bg-white rounded-2xl border border-[#E2EBF1] hover:border-[#0082C8] shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col group overflow-hidden"
-                >
-                  {/* Card Image */}
-                  <div className="relative aspect-square overflow-hidden bg-gray-50">
-                    <img
-                      src={prod.image}
-                      alt={prod.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      onClick={() => handleCardClick(prod.id)}
-                      referrerPolicy="no-referrer"
-                    />
-                    
-                    {/* Sale Tag */}
-                    {prod.tag && (
-                      <span className="absolute top-3 left-3 px-2.5 py-0.5 text-[8px] font-extrabold text-white bg-red-500 rounded-full uppercase tracking-wide">
-                        {prod.tag}
-                      </span>
-                    )}
-
-                    {/* Quick View overlay */}
-                    <button
-                      onClick={() => handleCardClick(prod.id)}
-                      className="absolute bottom-3 left-3 right-3 bg-white/95 backdrop-blur-sm text-[#002D62] hover:bg-white text-[9px] font-extrabold uppercase py-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-sm uppercase tracking-wider cursor-pointer"
-                    >
-                      View Formula Details
-                    </button>
+                  {/* Badges on Top Left & Right */}
+                  <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+                    <span className="px-3 py-1 text-[9px] font-extrabold text-white bg-[#002D62] rounded-full uppercase tracking-wider shadow-sm">
+                      Bestseller
+                    </span>
+                    <span className="px-3 py-1 text-[9px] font-extrabold text-white bg-[#43B02A] rounded-full uppercase tracking-wider shadow-sm">
+                      Removes 99% Excess Oil
+                    </span>
                   </div>
 
-                  {/* Card Info */}
-                  <div className="p-4 flex flex-col flex-grow justify-between space-y-3">
-                    <div className="space-y-1.5">
-                      {/* Rating */}
-                      <div className="flex items-center gap-1">
-                        <div className="flex text-amber-400">
-                          {[...Array(5)].map((_, i) => (
-                            <Star key={i} className={`w-3 h-3 ${i < Math.floor(prod.rating) ? 'fill-current' : 'text-gray-200'}`} />
-                          ))}
-                        </div>
-                        <span className="text-[10px] text-gray-400 font-bold">({prod.reviewsCount})</span>
-                      </div>
+                  <div className="absolute top-4 right-4">
+                    <span className="px-3 py-1 text-[9px] font-extrabold text-[#002D62] bg-white/90 backdrop-blur-sm rounded-full border border-gray-200 uppercase tracking-wider shadow-xs">
+                      125ml
+                    </span>
+                  </div>
 
-                      {/* Title */}
-                      <h4
-                        onClick={() => handleCardClick(prod.id)}
-                        className="text-xs font-extrabold text-[#0A1C2A] hover:text-[#0082C8] line-clamp-2 cursor-pointer leading-tight transition-colors"
-                      >
-                        {prod.name}
-                      </h4>
+                  {/* Bottom Hover Pill */}
+                  <div className="absolute bottom-4 left-4 right-4 text-center">
+                    <span className="inline-flex items-center gap-1.5 px-4 py-2 bg-white/95 backdrop-blur-sm text-[#002D62] font-extrabold text-[10px] uppercase tracking-wider rounded-full shadow-md group-hover:bg-[#002D62] group-hover:text-white transition-all">
+                      <Sparkles className="w-3.5 h-3.5 text-[#0082C8] group-hover:text-white" />
+                      View Formula Details
+                    </span>
+                  </div>
+                </div>
+              </div>
 
-                      {/* Category Badge & Key ingredient */}
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">
-                          {prod.category}
-                        </span>
-                        {prod.ingredients && prod.ingredients[0] && (
-                          <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-[#E6F4EA] text-[#43B02A] border border-[#C8E6C9]">
-                            {prod.ingredients[0]}
-                          </span>
-                        )}
-                      </div>
+              {/* Right Column: Title with oily skin, detailed mention of product, and actions */}
+              <div className="lg:col-span-6 order-1 lg:order-2 space-y-5">
+                
+                {/* Pre-title tag */}
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] sm:text-xs font-black uppercase tracking-[0.25em] text-[#0082C8] bg-white px-3.5 py-1 rounded-full border border-[#D0E5F2] shadow-xs">
+                    Targeted Care · Oily &amp; Combination Skin
+                  </span>
+                </div>
+
+                {/* Title including Oily Skin */}
+                <div className="space-y-1.5">
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#002D62] tracking-tight leading-tight">
+                    Deep Cleansing &amp; Barrier Defense for Oily Skin
+                  </h2>
+                  <h3 className="text-sm sm:text-base font-bold text-[#0082C8]">
+                    Cetaphil Oily Skin Cleanser (125ml)
+                  </h3>
+                </div>
+
+                {/* Product Description */}
+                <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
+                  Specifically formulated for oily, combination, or acne-prone skin. This gentle low-lather foaming gel cleanser is clinically proven to deep clean pores, eliminate excess sebum, and remove 99% of impurities, dirt, and makeup without stripping the skin's essential moisture barrier.
+                </p>
+
+                {/* Key Clinical Benefits Bullet Points */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-gray-700">
+                  <div className="flex items-start gap-2 bg-white/80 p-2.5 rounded-xl border border-[#E2EBF1]">
+                    <CheckCircle className="w-4 h-4 text-[#43B02A] shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="text-[#002D62] block text-[11px] font-bold">Triple Hydration Complex</strong>
+                      <span className="text-[11px] text-gray-500">Niacinamide (B3), Panthenol (B5) &amp; Glycerin</span>
                     </div>
-
-                    <div className="space-y-2.5">
-                      {/* Pricing */}
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-sm font-black text-[#002D62]">{formatLKR(prod.price)}</span>
-                        <span className="text-[10px] text-gray-400 line-through">{formatLKR(originalPrice)}</span>
-                      </div>
-
-                      {/* Action Buttons */}
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => {
-                            const globalProduct = products.find(p => p.id === prod.id) || prod;
-                            onAddToCart(globalProduct, 1);
-                          }}
-                          className="flex-1 inline-flex items-center justify-center gap-1 border-2 border-[#002D62] text-[#002D62] hover:bg-[#EEF5F9] text-[10px] font-bold uppercase py-2 rounded-xl transition-colors cursor-pointer"
-                        >
-                          <ShoppingCart className="w-3 h-3" />
-                          Add
-                        </button>
-                        <button
-                          onClick={() => {
-                            const globalProduct = products.find(p => p.id === prod.id) || prod;
-                            onBuyNow(globalProduct);
-                          }}
-                          className="flex-1 inline-flex items-center justify-center gap-1 bg-[#0082C8] hover:bg-[#006EA8] text-white text-[10px] font-extrabold uppercase py-2 rounded-xl transition-colors cursor-pointer shadow-xs"
-                        >
-                          <Zap className="w-3 h-3 fill-current" />
-                          Buy Now
-                        </button>
-                      </div>
+                  </div>
+                  <div className="flex items-start gap-2 bg-white/80 p-2.5 rounded-xl border border-[#E2EBF1]">
+                    <CheckCircle className="w-4 h-4 text-[#43B02A] shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="text-[#002D62] block text-[11px] font-bold">5 Signs of Sensitivity</strong>
+                      <span className="text-[11px] text-gray-500">Defends barrier against tightness &amp; irritation</span>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2 bg-white/80 p-2.5 rounded-xl border border-[#E2EBF1]">
+                    <CheckCircle className="w-4 h-4 text-[#43B02A] shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="text-[#002D62] block text-[11px] font-bold">Non-Comedogenic</strong>
+                      <span className="text-[11px] text-gray-500">Soap-free &amp; hypoallergenic pore defense</span>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2 bg-white/80 p-2.5 rounded-xl border border-[#E2EBF1]">
+                    <CheckCircle className="w-4 h-4 text-[#43B02A] shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="text-[#002D62] block text-[11px] font-bold">Pore Tightening Foam</strong>
+                      <span className="text-[11px] text-gray-500">Reduces enlarged pores &amp; daytime shine</span>
                     </div>
                   </div>
                 </div>
-              );
-            })}
-          </div>
 
+                {/* Price, Stock & Actions */}
+                <div className="pt-3 border-t border-[#D5E6F2] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <div className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Official Price</div>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl font-black text-[#002D62]">
+                        {formatLKR(oilyProduct?.price || 4800)}
+                      </span>
+                      <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                        In Stock (250)
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2.5">
+                    {oilyProduct && (
+                      <>
+                        <button
+                          onClick={() => {
+                            onAddToCart(oilyProduct, 1);
+                            const btn = document.getElementById('oily-sec-add-btn');
+                            if (btn) {
+                              btn.innerText = "Added ✓";
+                              setTimeout(() => { if (btn) btn.innerText = "Add to Cart"; }, 1800);
+                            }
+                          }}
+                          id="oily-sec-add-btn"
+                          className="px-5 py-3 border-2 border-[#002D62] text-[#002D62] hover:bg-[#EEF5F9] font-extrabold text-[10px] sm:text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer flex items-center gap-1.5"
+                        >
+                          <ShoppingCart className="w-3.5 h-3.5" />
+                          Add to Cart
+                        </button>
+                        <button
+                          onClick={() => onBuyNow(oilyProduct)}
+                          className="px-6 py-3 bg-[#0082C8] hover:bg-[#006EA8] text-white font-extrabold text-[10px] sm:text-xs uppercase tracking-wider rounded-xl shadow-md transition-all cursor-pointer flex items-center gap-1.5"
+                        >
+                          <Zap className="w-3.5 h-3.5 fill-current" />
+                          Buy Now
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
         </section>
 
         {/* 5. CLINICALLY PROVEN: TESTIMONIALS SECTION */}
@@ -1186,20 +983,20 @@ export default function ProductCatalog({
                   <div className="pt-4">
                     <h4 className="text-xs font-black text-[#002D62] flex items-center gap-2">
                       <span className="text-[#43B02A] font-mono font-bold">Q2.</span>
-                      How often should I use the AHA Miracle Renewal Serum?
+                      Can Cetaphil Moisturizing Cream be used on both face and body?
                     </h4>
                     <p className="text-xs text-gray-600 mt-2 leading-relaxed pl-6">
-                      We recommend integrating the serum slowly. Start by applying it 2-3 nights per week. As your skin develops tolerance, you can safely transition to nightly application. Always follow with our Hydrating Exfoliating Cream and wear a broad-spectrum sunscreen (SPF 30+) during daytime.
+                      Yes! Cetaphil Moisturizing Cream is clinically formulated to provide intensive 48-hour hydration for the face, hands, elbows, knees, and severely dry skin areas without clogging pores or feeling greasy.
                     </p>
                   </div>
 
                   <div className="pt-4">
                     <h4 className="text-xs font-black text-[#002D62] flex items-center gap-2">
                       <span className="text-[#43B02A] font-mono font-bold">Q3.</span>
-                      Can I combine the BHA Toner and the AHA Cleanser in the same regime?
+                      Which Cetaphil cleanser is best for my skin type?
                     </h4>
                     <p className="text-xs text-gray-600 mt-2 leading-relaxed pl-6">
-                      Yes! The daily cleanser gently sweeps surface residue using Glycolic Acid (AHA), while the toner works deeper inside your pore linings using 2% Salicylic Acid (BHA). For dry/extremely sensitive skin, we recommend alternating them (e.g., cleanser in the morning, toner at night).
+                      For normal, dry, or sensitive skin, Cetaphil Gentle Skin Cleanser preserves your moisture barrier. For oily, combination, or acne-prone skin, Cetaphil Oily Skin Cleanser deep cleans pores and eliminates excess sebum without over-drying.
                     </p>
                   </div>
 

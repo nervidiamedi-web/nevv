@@ -225,16 +225,16 @@ export const defaultDatabaseState: DBState = {
       stock: 250,
       is_active: true,
       image_urls: [
+        "https://imgur.com/1hfncF3",
         "https://imgur.com/7Ffa5wT",
-        "https://imgur.com/ckg9mOL",
-        "https://imgur.com/1hfncF3"
+        "https://imgur.com/ckg9mOL"
       ],
-      image: "https://i.imgur.com/7Ffa5wT.png",
-      image_url: "https://i.imgur.com/7Ffa5wT.png",
+      image: "https://i.imgur.com/1hfncF3.png",
+      image_url: "https://i.imgur.com/1hfncF3.png",
       images: [
+        "https://i.imgur.com/1hfncF3.png",
         "https://i.imgur.com/7Ffa5wT.png",
-        "https://i.imgur.com/ckg9mOL.png",
-        "https://i.imgur.com/1hfncF3.png"
+        "https://i.imgur.com/ckg9mOL.png"
       ],
       skinConcern: [
         "Dry Skin",
@@ -295,14 +295,16 @@ export const defaultDatabaseState: DBState = {
       stock: 250,
       is_active: true,
       image_urls: [
+        "https://imgur.com/a/PRBLm6f",
         "https://imgur.com/Uqn2O2G",
         "https://imgur.com/8sIeirH",
         "https://imgur.com/EKxqjk2",
         "https://imgur.com/7g9tPAY"
       ],
-      image: "https://i.imgur.com/Uqn2O2G.png",
-      image_url: "https://i.imgur.com/Uqn2O2G.png",
+      image: "https://i.imgur.com/OUSWZFX.png",
+      image_url: "https://i.imgur.com/OUSWZFX.png",
       images: [
+        "https://i.imgur.com/OUSWZFX.png",
         "https://i.imgur.com/Uqn2O2G.png",
         "https://i.imgur.com/8sIeirH.png",
         "https://i.imgur.com/EKxqjk2.png",

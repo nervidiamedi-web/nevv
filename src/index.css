@@ -31,3 +31,12 @@
 .clinical-pulse {
   animation: pulseGlow 2s infinite ease-in-out;
 }
+
+@keyframes slideProgress3s {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+.slide-progress-3s {
+  animation: slideProgress3s 3s linear forwards;
+}

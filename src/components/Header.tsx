@@ -56,9 +56,27 @@ export default function Header({
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-100 shadow-xs">
+      {/* Top Nourishing & Hydrating Campaign Banner - Exact design & color match */}
+      <div className="w-full bg-[#D80075] text-white py-2 px-4 sm:px-8 lg:px-12 border-b-2 border-[#002D62]">
+        <div className="max-w-7xl mx-auto flex items-center justify-center sm:justify-end">
+          <button
+            onClick={() => {
+              handleNavClick('shop');
+              setTimeout(() => {
+                const el = document.getElementById('catalog-grid-start');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }, 80);
+            }}
+            className="text-xs sm:text-sm font-bold text-white underline underline-offset-4 decoration-white hover:opacity-90 transition-opacity cursor-pointer tracking-wide"
+          >
+            NEW Nourishing & Hydrating Line!
+          </button>
+        </div>
+      </div>
+
       {/* Dynamic Promo Banner managed via CMS */}
       {promoBanner.visible && (
-        <div className="bg-[#002D62] text-white text-xs font-medium py-2 px-4 text-center tracking-wide flex items-center justify-center gap-2">
+        <div className="bg-[#002D62] text-white text-xs font-medium py-1.5 px-4 text-center tracking-wide flex items-center justify-center gap-2">
           <span className="hidden sm:inline-block w-2 h-2 rounded-full bg-[#43B02A]" />
           <span>{promoBanner.text}</span>
         </div>
