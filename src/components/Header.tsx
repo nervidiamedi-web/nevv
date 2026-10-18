@@ -52,6 +52,14 @@ export default function Header({
     setCurrentView(view);
     setSelectedProductId(null);
     setMobileMenuOpen(false);
+    if (typeof window !== 'undefined') {
+      if (view === 'why-cetaphil') {
+        window.history.pushState(null, '', '/why-cetaphil');
+      } else {
+        window.history.pushState(null, '', '/');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   return (
@@ -104,7 +112,7 @@ export default function Header({
           </button>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex space-x-7">
+          <nav className="hidden md:flex space-x-6 lg:space-x-7">
             <button
               onClick={() => handleNavClick('shop')}
               className={`text-sm font-semibold transition-all duration-200 py-1 border-b-2 ${
@@ -157,6 +165,16 @@ export default function Header({
             >
               <HelpCircle className="w-4.5 h-4.5 text-[#0082C8]" />
               AI Consult
+            </button>
+            <button
+              onClick={() => handleNavClick('why-cetaphil')}
+              className={`text-sm font-semibold transition-all duration-200 py-1 border-b-2 ${
+                currentView === 'why-cetaphil'
+                  ? 'border-[#0082C8] text-[#0082C8] font-bold'
+                  : 'border-transparent text-[#0A1C2A] hover:text-[#0082C8]'
+              }`}
+            >
+              Why Cetaphil
             </button>
           </nav>
 
@@ -299,6 +317,14 @@ export default function Header({
             >
               <HelpCircle className="w-4 h-4 text-[#0082C8]" />
               AI Consultant
+            </button>
+            <button
+              onClick={() => handleNavClick('why-cetaphil')}
+              className={`text-left text-sm py-2 px-3 rounded-lg flex items-center gap-2 ${
+                currentView === 'why-cetaphil' ? 'bg-[#EEF5F9] text-[#0082C8] font-bold' : 'text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              Why Cetaphil
             </button>
           </div>
         </div>

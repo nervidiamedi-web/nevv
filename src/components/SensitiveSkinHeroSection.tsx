@@ -49,8 +49,9 @@ export default function SensitiveSkinHeroSection({
         text: 'Learn More',
         targetId: 'sensitive-skin-education'
       },
-      image: '/src/assets/images/nourishing_lotion_cream_1791538479858.jpg',
-      alt: 'Nourishing body lotion and hydrating facial cream on clean travertine stone in soft morning daylight',
+      image: 'https://i.imgur.com/stYPYVz.jpeg',
+      fallbackImage: '/src/assets/images/banner_slide_1.jpg',
+      alt: 'Cetaphil Gentle Skin Cleanser and Hydrating Skincare products',
       productName: 'Derma·Sense Hydration Duo',
       productSub: 'Enriched with Ceramides & Hyaluronic Acid',
       gradient: 'from-[#F5F8FA] via-[#FAF8F5] to-white',
@@ -72,8 +73,9 @@ export default function SensitiveSkinHeroSection({
         text: 'Take Skin Quiz',
         type: 'quiz'
       },
-      image: '/src/assets/images/gentle_skin_regimen_1791539095380.jpg',
-      alt: 'Gentle skin cleanser and barrier restorative lotion on clean stone pedestal',
+      image: 'https://i.imgur.com/vbpOSCh.jpeg',
+      fallbackImage: '/src/assets/images/banner_slide_2.jpg',
+      alt: 'Cetaphil Daily Hydrating and Barrier Restorative skincare line',
       productName: 'Derma·Care Gentle Regimen',
       productSub: 'Clinically Proven 5-Sign Barrier Defense',
       gradient: 'from-[#F0F7FA] via-[#F4FAF7] to-white',
@@ -96,8 +98,9 @@ export default function SensitiveSkinHeroSection({
         type: 'scroll-oily',
         targetConcern: 'Oily Skin'
       },
-      image: '/src/assets/images/oily_cleanser_hero_1791539120476.jpg',
-      alt: 'Deep pore cleansing gel bottle on travertine stone with natural morning water reflections',
+      image: 'https://i.imgur.com/TskOQ5D.jpeg',
+      fallbackImage: '/src/assets/images/banner_slide_3.jpg',
+      alt: 'Cetaphil Oily Skin Cleanser and Clarifying skincare formula',
       productName: 'Derma·Clarity Deep Pore Gel',
       productSub: 'Salicylic Acid, Zinc PCA & Vitamin B3',
       gradient: 'from-[#F2F8FD] via-[#EEF5FB] to-white',
@@ -402,6 +405,12 @@ export default function SensitiveSkinHeroSection({
                   <img
                     src={currentSlideData.image}
                     alt={currentSlideData.alt}
+                    referrerPolicy="no-referrer"
+                    onError={(e) => {
+                      if (currentSlideData.fallbackImage && e.currentTarget.src !== currentSlideData.fallbackImage) {
+                        e.currentTarget.src = currentSlideData.fallbackImage;
+                      }
+                    }}
                     className="w-full h-auto max-h-[440px] sm:max-h-[480px] object-cover object-center transition-transform duration-700 hover:scale-[1.02]"
                     loading="eager"
                   />

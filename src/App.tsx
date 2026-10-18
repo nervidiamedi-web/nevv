@@ -13,11 +13,18 @@ import SkincareTipsPage from './components/SkincareTipsPage';
 import CartSidebar from './components/CartSidebar';
 import Checkout from './components/Checkout';
 import UserDashboard from './components/UserDashboard';
+import WhyCetaphilPage from './components/WhyCetaphilPage';
+import WhatsAppButton from './components/WhatsAppButton';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 
 export default function App() {
-  // Navigation Router states
-  const [currentView, setCurrentView] = useState<string>('shop');
+  // Navigation Router states (supports /why-cetaphil URL directly)
+  const [currentView, setCurrentView] = useState<string>(() => {
+    if (typeof window !== 'undefined' && window.location.pathname === '/why-cetaphil') {
+      return 'why-cetaphil';
+    }
+    return 'shop';
+  });
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
 
   // Full-stack DB state
@@ -75,6 +82,19 @@ export default function App() {
 
   useEffect(() => {
     fetchDB();
+
+    const handlePopState = () => {
+      if (typeof window !== 'undefined') {
+        if (window.location.pathname === '/why-cetaphil') {
+          setCurrentView('why-cetaphil');
+        } else {
+          setCurrentView('shop');
+        }
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
   // CART OPERATIONS
@@ -347,6 +367,13 @@ export default function App() {
           />
         )}
 
+        {currentView === 'why-cetaphil' && (
+          <WhyCetaphilPage
+            setCurrentView={setCurrentView}
+            setSelectedProductId={setSelectedProductId}
+          />
+        )}
+
         {currentView === 'baby' && (
           <BabyProductsPage
             products={products}
@@ -428,6 +455,9 @@ export default function App() {
 
       {/* Global Footer */}
       <Footer setCurrentView={setCurrentView} setSelectedProductId={setSelectedProductId} />
+
+      {/* Static Floating WhatsApp Button */}
+      <WhatsAppButton />
     </div>
   );
 }

@@ -9,6 +9,13 @@ export default function Footer({ setCurrentView, setSelectedProductId }: FooterP
   const handleNavClick = (view: string) => {
     setCurrentView(view);
     setSelectedProductId(null);
+    if (typeof window !== 'undefined') {
+      if (view === 'why-cetaphil') {
+        window.history.pushState(null, '', '/why-cetaphil');
+      } else {
+        window.history.pushState(null, '', '/');
+      }
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -44,6 +51,11 @@ export default function Footer({ setCurrentView, setSelectedProductId }: FooterP
           <div>
             <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-4">Cetaphil Care</h4>
             <ul className="space-y-2.5 text-xs">
+              <li>
+                <button onClick={() => handleNavClick('why-cetaphil')} className="hover:text-white hover:underline transition-all text-[#70D6FF] font-medium">
+                  Why Cetaphil (Nervidia)
+                </button>
+              </li>
               <li>
                 <button onClick={() => handleNavClick('shop')} className="hover:text-white hover:underline transition-all text-blue-100">
                   Shop All Products
