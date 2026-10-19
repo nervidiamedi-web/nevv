@@ -40,3 +40,9 @@
 .slide-progress-3s {
   animation: slideProgress3s 3s linear forwards;
 }
+
+/* Hide Netlify badge and branding */
+[class*="netlify"], #netlify-badge {
+  display: none !important;
+}
+
