@@ -17,7 +17,10 @@ import {
   MessageSquare,
   MapPin,
   User,
-  ShoppingBag
+  ShoppingBag,
+  Home,
+  Clock,
+  Sparkles
 } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { formatLKR } from '../lib/formatters';
@@ -210,98 +213,196 @@ export default function Checkout({
     }
   };
 
-  // SUCCESS STATE VIEW
+  // SUCCESS STATE VIEW (THANK YOU SCREEN)
   if (placedOrderId && placedOrderDetails) {
+    const totalItemCount = placedOrderDetails.items.reduce((acc, it) => acc + it.quantity, 0);
+
     return (
-      <div className="max-w-2xl mx-auto px-4 py-12 sm:py-16 text-center space-y-6">
-        <div className="w-20 h-20 bg-[#E6F4EA] text-[#43B02A] rounded-full flex items-center justify-center mx-auto border-2 border-[#C8E6C9] shadow-md animate-bounce">
-          <CheckCircle2 className="w-12 h-12" />
-        </div>
-
-        <div className="space-y-2">
-          <span className="text-[10px] font-extrabold text-white bg-[#43B02A] px-3.5 py-1 rounded-full uppercase tracking-wider">
-            Order Confirmed
+      <div className="max-w-3xl mx-auto px-4 py-8 sm:py-14 text-center space-y-8">
+        
+        {/* Animated Success Badge */}
+        <div className="relative inline-flex items-center justify-center">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 bg-[#E6F4EA] text-[#43B02A] rounded-full flex items-center justify-center mx-auto border-4 border-[#C8E6C9] shadow-lg animate-bounce">
+            <CheckCircle2 className="w-12 h-12 sm:w-14 sm:h-14" />
+          </div>
+          <span className="absolute -bottom-1 bg-[#43B02A] text-white text-[10px] sm:text-xs font-black uppercase tracking-wider px-3 py-0.5 rounded-full shadow-xs">
+            Confirmed
           </span>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#002D62]">
-            Order placed successfully!
-          </h1>
-          <p className="text-sm font-mono font-bold text-[#0082C8] bg-blue-50 py-1.5 px-4 rounded-xl inline-block border border-blue-200">
-            Order ID: {placedOrderId}
-          </p>
-          <p className="text-xs sm:text-sm text-gray-600 max-w-md mx-auto pt-1 leading-relaxed">
-            Your order has been placed successfully. We will contact you shortly to confirm your order and coordinate express courier delivery.
-          </p>
         </div>
 
-        {/* Invoice Summary Card */}
-        <div className="bg-white border border-[#E2EBF1] rounded-3xl p-6 sm:p-7 text-left space-y-4 max-w-lg mx-auto shadow-sm">
-          <div className="flex justify-between items-center border-b border-[#E2EBF1] pb-3">
-            <h3 className="text-xs font-bold text-[#002D62] uppercase tracking-wider flex items-center gap-1.5">
-              <PackageCheck className="w-4 h-4 text-[#0082C8]" />
-              Order Summary
-            </h3>
-            <span className="text-[11px] text-gray-400 font-medium">Cash on Delivery</span>
+        {/* Thank You Header & Personalized Message */}
+        <div className="space-y-3">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-[#002D62] tracking-tight">
+            Thank You for Your Order!
+          </h1>
+          <p className="text-base sm:text-lg font-medium text-gray-700">
+            Thank you, <span className="font-bold text-[#002D62]">{placedOrderDetails.customerName}</span>. Your order has been placed successfully.
+          </p>
+          <div className="inline-flex items-center gap-2 bg-[#EEF5F9] border border-[#D1E5F2] px-4 py-1.5 rounded-full text-xs sm:text-sm font-mono font-bold text-[#0082C8] shadow-2xs">
+            <span>Order Reference:</span>
+            <span className="text-[#002D62]">#{placedOrderId}</span>
+          </div>
+        </div>
+
+        {/* Order Processing Notice */}
+        <div className="bg-gradient-to-r from-[#EEF5F9] via-white to-[#EEF5F9] border-2 border-[#0082C8]/30 rounded-3xl p-5 sm:p-6 text-left max-w-xl mx-auto shadow-sm flex items-start gap-4">
+          <div className="w-11 h-11 rounded-2xl bg-[#0082C8] text-white flex items-center justify-center shrink-0 shadow-xs">
+            <Clock className="w-6 h-6 animate-pulse" />
+          </div>
+          <div className="space-y-1">
+            <h2 className="text-sm sm:text-base font-extrabold text-[#002D62] flex items-center gap-2">
+              <span>We will process your order as soon as possible.</span>
+              <span className="w-2 h-2 rounded-full bg-[#43B02A] animate-ping" />
+            </h2>
+            <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+              Our team has received your order and is currently preparing your products for dispatch. We will contact you at <span className="font-semibold text-[#002D62]">{placedOrderDetails.phone}</span> shortly to confirm your order details and coordinate express courier delivery to your doorstep.
+            </p>
+          </div>
+        </div>
+
+        {/* Ordered Products Showcase Card */}
+        <div className="bg-white border border-[#E2EBF1] rounded-3xl p-6 sm:p-8 text-left space-y-6 max-w-xl mx-auto shadow-md">
+          <div className="flex justify-between items-center border-b border-[#E2EBF1] pb-4">
+            <div className="flex items-center gap-2">
+              <PackageCheck className="w-5 h-5 text-[#0082C8]" />
+              <h2 className="text-sm sm:text-base font-bold text-[#002D62] uppercase tracking-wider">
+                Your Ordered Products
+              </h2>
+            </div>
+            <span className="text-xs font-bold text-[#0082C8] bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
+              {totalItemCount} {totalItemCount === 1 ? 'item' : 'items'}
+            </span>
           </div>
 
-          <div className="space-y-3 max-h-56 overflow-y-auto">
-            {placedOrderDetails.items.map(item => (
-              <div key={item.id} className="flex items-center gap-3 text-xs">
-                <img
-                  src={toDirectImageUrl(item.image_url || item.product?.image, item.id || item.product?.slug || item.name)}
-                  alt={item.name}
-                  referrerPolicy="no-referrer"
-                  className="w-12 h-12 object-contain rounded-xl border border-gray-100 p-1 bg-white shrink-0"
-                />
-                <div className="flex-grow min-w-0">
-                  <p className="font-bold text-[#002D62] truncate">{item.name}</p>
-                  <p className="text-[11px] text-gray-500 font-mono">
-                    {item.quantity} x {formatLKR(item.price)}
-                  </p>
+          {/* Product Items List */}
+          <div className="space-y-4 divide-y divide-gray-100">
+            {placedOrderDetails.items.map(item => {
+              const itemImg = toDirectImageUrl(
+                item.image_url || item.product?.image,
+                item.id || item.product?.slug || item.name
+              );
+
+              return (
+                <div key={item.id} className="pt-4 first:pt-0 flex items-center gap-4">
+                  {/* Product thumbnail */}
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 bg-[#F4F8FA] rounded-2xl border border-gray-100 p-1.5 flex items-center justify-center shrink-0">
+                    <img
+                      src={itemImg}
+                      alt={item.name}
+                      referrerPolicy="no-referrer"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = 'https://i.imgur.com/DCJMlkw.png';
+                      }}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+
+                  {/* Product details */}
+                  <div className="flex-grow min-w-0 space-y-1">
+                    <p className="font-extrabold text-[#002D62] text-xs sm:text-sm line-clamp-2 leading-snug">
+                      {item.name}
+                    </p>
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
+                      <span className="bg-gray-100 px-2 py-0.5 rounded-md font-semibold text-gray-700">
+                        Qty: {item.quantity}
+                      </span>
+                      <span>×</span>
+                      <span className="font-mono">{formatLKR(item.price)}</span>
+                    </div>
+                  </div>
+
+                  {/* Subtotal */}
+                  <div className="text-right shrink-0">
+                    <span className="text-xs text-gray-400 block font-medium">Subtotal</span>
+                    <span className="font-black text-sm sm:text-base text-[#002D62]">
+                      {formatLKR(item.price * item.quantity)}
+                    </span>
+                  </div>
                 </div>
-                <span className="font-extrabold text-[#002D62]">
-                  {formatLKR(item.price * item.quantity)}
-                </span>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
-          <div className="border-t border-[#E2EBF1] pt-3 space-y-1.5 text-xs text-gray-600">
-            <div className="flex justify-between">
-              <span>Customer:</span>
+          {/* Delivery & Payment Information */}
+          <div className="border-t border-[#E2EBF1] pt-5 space-y-2.5 text-xs text-gray-600 bg-[#F8FAFC] -mx-6 -mb-6 sm:-mx-8 sm:-mb-8 p-6 sm:p-8 rounded-b-3xl">
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-gray-500">Recipient Name:</span>
               <span className="font-bold text-[#002D62]">{placedOrderDetails.customerName}</span>
             </div>
-            <div className="flex justify-between">
-              <span>Contact Phone:</span>
-              <span className="font-mono font-semibold">{placedOrderDetails.phone}</span>
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-gray-500">Phone Number:</span>
+              <span className="font-mono font-semibold text-[#002D62]">{placedOrderDetails.phone}</span>
             </div>
             {placedOrderDetails.whatsapp && (
-              <div className="flex justify-between">
-                <span>WhatsApp:</span>
-                <span className="font-mono font-semibold">{placedOrderDetails.whatsapp}</span>
+              <div className="flex justify-between items-center">
+                <span className="font-medium text-gray-500">WhatsApp:</span>
+                <span className="font-mono font-semibold text-[#43B02A]">{placedOrderDetails.whatsapp}</span>
               </div>
             )}
-            <div className="flex justify-between">
-              <span>Delivery Address:</span>
-              <span className="text-right max-w-[240px] truncate">{placedOrderDetails.address}, {placedOrderDetails.city}</span>
+            <div className="flex justify-between items-start">
+              <span className="font-medium text-gray-500 shrink-0">Delivery Address:</span>
+              <span className="text-right font-medium text-gray-800 max-w-[260px]">
+                {placedOrderDetails.address}, {placedOrderDetails.city}
+              </span>
             </div>
-            <div className="border-t border-[#E2EBF1] pt-3 flex justify-between items-center text-sm font-black text-[#002D62]">
-              <span>Total Payable:</span>
-              <span className="text-base text-[#0082C8]">{formatLKR(placedOrderDetails.total)}</span>
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-gray-500">Payment Method:</span>
+              <span className="font-bold text-[#43B02A] flex items-center gap-1">
+                <Banknote className="w-3.5 h-3.5" />
+                Cash on Delivery (COD)
+              </span>
+            </div>
+
+            {/* Total Payable */}
+            <div className="border-t border-gray-200/80 pt-4 mt-2 flex justify-between items-center">
+              <div>
+                <span className="text-xs font-bold text-gray-500 uppercase tracking-wider block">
+                  Total Payable
+                </span>
+                <span className="text-[11px] text-gray-400">Pay cash upon delivery</span>
+              </div>
+              <span className="text-xl sm:text-2xl font-black text-[#0082C8]">
+                {formatLKR(placedOrderDetails.total)}
+              </span>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-3 justify-center pt-2">
+        {/* Navigation & Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-3.5 justify-center items-center pt-2 max-w-md mx-auto">
+          {/* Requested Back to Home Button */}
           <button
             onClick={() => {
               setCurrentView('shop');
+              if (typeof window !== 'undefined') {
+                window.history.pushState(null, '', '/');
+              }
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            className="px-7 py-3 bg-[#002D62] hover:bg-[#0082C8] text-white font-bold text-xs uppercase tracking-wider rounded-full shadow-md transition-colors cursor-pointer"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-[#002D62] hover:bg-[#0082C8] text-white font-bold text-sm rounded-full shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer active:scale-95"
           >
-            Continue Shopping
+            <Home className="w-4 h-4" />
+            <span>Back to Home</span>
           </button>
+
+          {/* Quick WhatsApp Support Option */}
+          <a
+            href={`https://wa.me/94766449830?text=Hello%20Nervidia%2C%20I%20just%20placed%20order%20%23${placedOrderId}%20for%20${encodeURIComponent(placedOrderDetails.customerName)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-sm rounded-full shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer active:scale-95"
+          >
+            <Phone className="w-4 h-4" />
+            <span>WhatsApp Support</span>
+          </a>
         </div>
+
+        {/* Assurance footnote */}
+        <div className="pt-2 flex items-center justify-center gap-2 text-xs text-gray-500">
+          <ShieldCheck className="w-4 h-4 text-[#43B02A]" />
+          <span>Authorized Cetaphil Sri Lanka Distributor • 100% Genuine Skincare</span>
+        </div>
+
       </div>
     );
   }
