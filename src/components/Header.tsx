@@ -34,8 +34,11 @@ export default function Header({
     : [];
 
   const handleSuggestionClick = (product: Product) => {
-    setSelectedProductId(product.id);
+    setSelectedProductId(product.slug || product.id);
     setCurrentView('pdp');
+    if (typeof window !== 'undefined') {
+      window.history.pushState(null, '', `/product/${product.slug || product.id}`);
+    }
     setSearchQuery('');
     setShowSuggestions(false);
   };
@@ -44,6 +47,9 @@ export default function Header({
     e.preventDefault();
     if (searchQuery.trim()) {
       setCurrentView('shop');
+      if (typeof window !== 'undefined') {
+        window.history.pushState(null, '', '/');
+      }
       setShowSuggestions(false);
     }
   };
@@ -55,6 +61,14 @@ export default function Header({
     if (typeof window !== 'undefined') {
       if (view === 'why-cetaphil') {
         window.history.pushState(null, '', '/why-cetaphil');
+      } else if (view === 'baby') {
+        window.history.pushState(null, '', '/baby');
+      } else if (view === 'tips' || view === 'blog') {
+        window.history.pushState(null, '', '/tips');
+      } else if (view === 'quiz') {
+        window.history.pushState(null, '', '/quiz');
+      } else if (view === 'consult') {
+        window.history.pushState(null, '', '/consult');
       } else {
         window.history.pushState(null, '', '/');
       }
@@ -206,17 +220,29 @@ export default function Header({
                     Recommended Cetaphil Solutions
                   </div>
                   {filteredSuggestions.map(product => (
-                    <button
+                    <a
                       key={product.id}
-                      onClick={() => handleSuggestionClick(product)}
-                      className="w-full text-left px-3.5 py-2.5 text-xs hover:bg-[#F4F8FA] flex items-center gap-2.5 border-b border-gray-50 last:border-0"
+                      href={`/product/${product.slug || product.id}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleSuggestionClick(product);
+                      }}
+                      className="w-full text-left px-3.5 py-2.5 text-xs hover:bg-[#F4F8FA] flex items-center gap-2.5 border-b border-gray-50 last:border-0 block"
                     >
-                      <img src={product.image} alt={product.name} className="w-7 h-7 object-contain rounded" referrerPolicy="no-referrer" />
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-7 h-7 object-contain rounded"
+                        referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).src = 'https://i.imgur.com/IxpPRLh.png';
+                        }}
+                      />
                       <div className="truncate">
                         <p className="font-bold text-[#0A1C2A] truncate">{product.name}</p>
                         <p className="text-[10px] text-[#0082C8] font-semibold capitalize">{product.category}</p>
                       </div>
-                    </button>
+                    </a>
                   ))}
                 </div>
               )}

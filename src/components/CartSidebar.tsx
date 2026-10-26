@@ -106,6 +106,10 @@ export default function CartSidebar({
                     <img
                       src={itemImg}
                       alt={itemName}
+                      referrerPolicy="no-referrer"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = 'https://i.imgur.com/IxpPRLh.png';
+                      }}
                       className="w-16 h-16 object-contain rounded-xl border border-gray-100 flex-shrink-0 bg-white"
                     />
                     

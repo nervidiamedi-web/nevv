@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Product } from '../types';
-import { ChevronLeft, Star, ShoppingCart, HelpCircle, Sparkles, RefreshCw, BookOpen, AlertTriangle, Zap, FileText } from 'lucide-react';
+import { ChevronLeft, Star, ShoppingCart, HelpCircle, Sparkles, RefreshCw, BookOpen, AlertTriangle, Zap, FileText, Link as LinkIcon, Check, Share2 } from 'lucide-react';
 import { askAdvisorApi } from '../services/api';
 import { formatLKR } from '../lib/formatters';
 import { toDirectImageUrl, toDirectImageUrls } from '../lib/imageUrl';
@@ -72,17 +72,69 @@ export default function ProductDetail({
     }
   };
 
+  const [copiedLink, setCopiedLink] = useState(false);
+
+  const handleCopyLink = () => {
+    const slug = product.slug || product.id;
+    const fullUrl = typeof window !== 'undefined'
+      ? `${window.location.origin}/product/${slug}`
+      : `/product/${slug}`;
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(fullUrl);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    }
+  };
+
+  const handleBackToShop = () => {
+    setSelectedProductId(null);
+    setCurrentView('shop');
+    if (typeof window !== 'undefined') {
+      window.history.pushState(null, '', '/');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       
-      {/* Back button */}
-      <button
-        onClick={() => { setSelectedProductId(null); setCurrentView('shop'); }}
-        className="inline-flex items-center gap-1.5 text-xs font-bold text-[#002D62] hover:text-[#0082C8] hover:underline cursor-pointer transition-colors"
-      >
-        <ChevronLeft className="w-4 h-4" />
-        Back to Clinic Shop
-      </button>
+      {/* Top Navigation & Breadcrumbs Bar with Direct Product Link */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
+        <div className="flex items-center gap-2 text-xs text-gray-500 flex-wrap">
+          <button
+            onClick={handleBackToShop}
+            className="inline-flex items-center gap-1 font-bold text-[#002D62] hover:text-[#0082C8] hover:underline cursor-pointer transition-colors"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            Shop All
+          </button>
+          <span>/</span>
+          <span className="text-[#0082C8] font-medium">{product.category}</span>
+          <span>/</span>
+          <span className="text-gray-700 font-semibold truncate max-w-[240px] sm:max-w-xs">{product.name}</span>
+        </div>
+
+        {/* Direct Link Share & Copy Button */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleCopyLink}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-[#002D62] bg-[#EEF5F9] hover:bg-[#D1E5F2] border border-[#D1E5F2] transition-colors cursor-pointer"
+            title="Copy direct product link"
+          >
+            {copiedLink ? (
+              <>
+                <Check className="w-3.5 h-3.5 text-[#43B02A]" />
+                <span className="text-[#43B02A]">Link Copied!</span>
+              </>
+            ) : (
+              <>
+                <LinkIcon className="w-3.5 h-3.5 text-[#0082C8]" />
+                <span>Copy Product Link</span>
+              </>
+            )}
+          </button>
+        </div>
+      </div>
 
       {/* Main product details block */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
@@ -94,6 +146,9 @@ export default function ProductDetail({
               src={activeImage}
               alt={product.name}
               referrerPolicy="no-referrer"
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).src = 'https://i.imgur.com/IxpPRLh.png';
+              }}
               className="max-h-[360px] max-w-full object-contain transition-all duration-300"
             />
             {product.tag && (
@@ -118,6 +173,9 @@ export default function ProductDetail({
                     src={imgUrl}
                     alt={`${product.name} thumbnail ${index + 1}`}
                     referrerPolicy="no-referrer"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src = 'https://i.imgur.com/IxpPRLh.png';
+                    }}
                     className="w-full h-full object-contain"
                   />
                 </button>
@@ -528,18 +586,37 @@ export default function ProductDetail({
           <h3 className="text-lg font-bold text-[#002D62] border-b border-gray-100 pb-2">Complementary Regimen Formulations</h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {relatedProducts.map(prod => (
-              <div
+              <a
                 key={prod.id}
-                onClick={() => { setSelectedProductId(prod.id); setQuantity(1); setAiResponse(''); setAiQuestion(''); }}
-                className="bg-white border border-[#E2EBF1] rounded-2xl p-4 flex gap-4 hover:shadow-md hover:border-[#0082C8] cursor-pointer transition-all items-center"
+                href={`/product/${prod.slug || prod.id}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setSelectedProductId(prod.slug || prod.id);
+                  if (typeof window !== 'undefined') {
+                    window.history.pushState({ view: 'pdp', productId: prod.slug || prod.id }, '', `/product/${prod.slug || prod.id}`);
+                  }
+                  setQuantity(1);
+                  setAiResponse('');
+                  setAiQuestion('');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="bg-white border border-[#E2EBF1] rounded-2xl p-4 flex gap-4 hover:shadow-md hover:border-[#0082C8] cursor-pointer transition-all items-center block"
               >
-                <img src={prod.image} alt={prod.name} className="w-14 h-14 object-cover rounded-xl border border-gray-100 flex-shrink-0" />
+                <img
+                  src={toDirectImageUrl(prod.image_url || prod.image, prod.slug || prod.id)}
+                  alt={prod.name}
+                  referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = 'https://i.imgur.com/IxpPRLh.png';
+                  }}
+                  className="w-14 h-14 object-contain rounded-xl border border-gray-100 flex-shrink-0"
+                />
                 <div className="truncate">
                   <p className="text-[10px] text-[#0082C8] capitalize font-bold">{prod.category}</p>
                   <p className="text-xs font-bold text-[#002D62] hover:underline truncate">{prod.name}</p>
                   <p className="text-xs font-extrabold text-[#002D62] mt-1">Rs. {prod.price.toLocaleString()}</p>
                 </div>
-              </div>
+              </a>
             ))}
           </div>
         </section>

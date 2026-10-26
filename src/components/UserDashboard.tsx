@@ -191,17 +191,30 @@ export default function UserDashboard({
                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-[#E2EBF1] pb-1">Items in this Order</p>
                 {selectedOrder.items.map((item, idx) => (
                   <div key={idx} className="flex gap-2 text-xs items-center justify-between">
-                    <div className="flex gap-2 items-center min-w-0">
-                      <img src={item.image} alt={item.name} referrerPolicy="no-referrer" className="w-10 h-10 object-contain rounded-xl border border-[#E2EBF1] p-1 flex-shrink-0 bg-white" />
-                      <button
-                        onClick={() => {
+                    <div className="flex items-center gap-2 min-w-0">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).src = 'https://i.imgur.com/IxpPRLh.png';
+                        }}
+                        className="w-10 h-10 object-contain rounded-xl border border-[#E2EBF1] p-1 flex-shrink-0 bg-white"
+                      />
+                      <a
+                        href={`/product/${item.productId}`}
+                        onClick={(e) => {
+                          e.preventDefault();
                           setSelectedProductId(item.productId);
                           setCurrentView('pdp');
+                          if (typeof window !== 'undefined') {
+                            window.history.pushState(null, '', `/product/${item.productId}`);
+                          }
                         }}
-                        className="font-bold text-gray-700 truncate hover:text-[#0082C8] transition-colors cursor-pointer text-left"
+                        className="font-bold text-gray-700 truncate hover:text-[#0082C8] transition-colors cursor-pointer text-left block"
                       >
                         {item.name}
-                      </button>
+                      </a>
                     </div>
                     <span className="text-[#002D62] font-bold text-xs flex-shrink-0">{formatLKR(item.price)}</span>
                   </div>

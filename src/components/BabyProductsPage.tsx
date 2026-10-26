@@ -44,9 +44,12 @@ export default function BabyProductsPage({
     return babyProducts;
   }, [babyProducts, selectedSubcategory]);
 
-  const handleCardClick = (id: string) => {
-    setSelectedProductId(id);
+  const handleCardClick = (idOrSlug: string) => {
+    setSelectedProductId(idOrSlug);
     setCurrentView('pdp');
+    if (typeof window !== 'undefined') {
+      window.history.pushState({ view: 'pdp', productId: idOrSlug }, '', `/product/${idOrSlug}`);
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -276,13 +279,23 @@ export default function BabyProductsPage({
                 className="bg-white rounded-3xl border border-[#E2EBF1] hover:border-[#0082C8] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group overflow-hidden"
               >
                 {/* Product Image Header with Tag */}
-                <div className="relative aspect-square bg-[#F4F8FA] p-6 flex items-center justify-center overflow-hidden">
+                <a
+                  href={`/product/${product.slug || product.id}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleCardClick(product.slug || product.id);
+                  }}
+                  className="relative aspect-square bg-[#F4F8FA] p-6 flex items-center justify-center overflow-hidden block"
+                  aria-label={`View ${product.name}`}
+                >
                   <img
-                    src={toDirectImageUrl(product.image_url || product.image)}
+                    src={toDirectImageUrl(product.image_url || product.image, product.slug || product.id)}
                     alt={product.name}
                     className="max-h-full max-w-full object-contain group-hover:scale-108 transition-transform duration-500 cursor-pointer"
-                    onClick={() => handleCardClick(product.id)}
                     referrerPolicy="no-referrer"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src = 'https://i.imgur.com/Tf2OUmd.png';
+                    }}
                   />
                   
                   {/* Floating badge */}
@@ -297,13 +310,16 @@ export default function BabyProductsPage({
                   </span>
 
                   {/* Quick Action Overlay */}
-                  <button
-                    onClick={() => handleCardClick(product.id)}
-                    className="absolute bottom-4 left-6 right-6 bg-white/95 backdrop-blur-md text-[#002D62] hover:bg-white text-xs font-extrabold py-2.5 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity uppercase tracking-wider text-center cursor-pointer"
+                  <span
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleCardClick(product.slug || product.id);
+                    }}
+                    className="absolute bottom-4 left-6 right-6 bg-white/95 backdrop-blur-md text-[#002D62] hover:bg-white text-xs font-extrabold py-2.5 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity uppercase tracking-wider text-center cursor-pointer block"
                   >
                     View Clinical Formula
-                  </button>
-                </div>
+                  </span>
+                </a>
 
                 {/* Card Body */}
                 <div className="p-6 flex flex-col flex-grow justify-between space-y-4">
@@ -321,11 +337,17 @@ export default function BabyProductsPage({
                     </div>
 
                     {/* Product Name */}
-                    <h3
-                      onClick={() => handleCardClick(product.id)}
-                      className="text-base font-extrabold text-[#002D62] hover:text-[#0082C8] transition-colors line-clamp-2 cursor-pointer leading-snug"
-                    >
-                      {product.name}
+                    <h3 className="text-base font-extrabold text-[#002D62] leading-snug">
+                      <a
+                        href={`/product/${product.slug || product.id}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleCardClick(product.slug || product.id);
+                        }}
+                        className="hover:text-[#0082C8] hover:underline transition-colors line-clamp-2 cursor-pointer"
+                      >
+                        {product.name}
+                      </a>
                     </h3>
 
                     {/* Short Description */}

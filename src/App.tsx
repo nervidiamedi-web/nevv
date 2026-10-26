@@ -17,15 +17,106 @@ import WhyCetaphilPage from './components/WhyCetaphilPage';
 import WhatsAppButton from './components/WhatsAppButton';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 
-export default function App() {
-  // Navigation Router states (supports /why-cetaphil URL directly)
-  const [currentView, setCurrentView] = useState<string>(() => {
-    if (typeof window !== 'undefined' && window.location.pathname === '/why-cetaphil') {
-      return 'why-cetaphil';
+// Helper to parse deep-linked route from browser address bar
+function parseRouteFromLocation(): { view: string; productId: string | null } {
+  if (typeof window === 'undefined') {
+    return { view: 'shop', productId: null };
+  }
+
+  const pathname = window.location.pathname;
+  const searchParams = new URLSearchParams(window.location.search);
+  const queryProduct = searchParams.get('product');
+
+  // Check product in query param e.g. /?product=slug or ?product=id
+  if (queryProduct) {
+    return { view: 'pdp', productId: decodeURIComponent(queryProduct.trim()) };
+  }
+
+  // Check product in pathname e.g. /product/slug or /product/id
+  if (pathname.startsWith('/product/')) {
+    const rawId = decodeURIComponent(pathname.replace('/product/', '').split('/')[0]).trim();
+    if (rawId) {
+      return { view: 'pdp', productId: rawId };
     }
-    return 'shop';
-  });
-  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+  }
+
+  // Other named views
+  if (pathname === '/why-cetaphil') {
+    return { view: 'why-cetaphil', productId: null };
+  }
+  if (pathname === '/baby') {
+    return { view: 'baby', productId: null };
+  }
+  if (pathname === '/tips' || pathname === '/blog') {
+    return { view: 'tips', productId: null };
+  }
+  if (pathname === '/quiz') {
+    return { view: 'quiz', productId: null };
+  }
+  if (pathname === '/consult') {
+    return { view: 'consult', productId: null };
+  }
+  if (pathname === '/checkout') {
+    return { view: 'checkout', productId: null };
+  }
+  if (pathname === '/profile') {
+    return { view: 'profile', productId: null };
+  }
+
+  return { view: 'shop', productId: null };
+}
+
+export default function App() {
+  // Navigation Router states with deep link address bar support
+  const initialRoute = parseRouteFromLocation();
+  const [currentView, setCurrentView] = useState<string>(initialRoute.view);
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(initialRoute.productId);
+
+  // Router handler that updates state and synchronizes address bar URL
+  const handleSelectProduct = (productIdOrSlug: string | null) => {
+    setSelectedProductId(productIdOrSlug);
+    if (productIdOrSlug) {
+      setCurrentView('pdp');
+      if (typeof window !== 'undefined') {
+        const found = products.find(p => p.id === productIdOrSlug || p.slug === productIdOrSlug);
+        const slug = found?.slug || productIdOrSlug;
+        window.history.pushState({ view: 'pdp', productId: slug }, '', `/product/${slug}`);
+      }
+    } else {
+      if (currentView === 'pdp') {
+        setCurrentView('shop');
+        if (typeof window !== 'undefined') {
+          window.history.pushState(null, '', '/');
+        }
+      }
+    }
+  };
+
+  const handleSetCurrentView = (view: string) => {
+    setCurrentView(view);
+    if (view !== 'pdp') {
+      setSelectedProductId(null);
+    }
+    if (typeof window !== 'undefined') {
+      if (view === 'why-cetaphil') {
+        window.history.pushState(null, '', '/why-cetaphil');
+      } else if (view === 'baby') {
+        window.history.pushState(null, '', '/baby');
+      } else if (view === 'tips' || view === 'blog') {
+        window.history.pushState(null, '', '/tips');
+      } else if (view === 'quiz') {
+        window.history.pushState(null, '', '/quiz');
+      } else if (view === 'consult') {
+        window.history.pushState(null, '', '/consult');
+      } else if (view === 'checkout') {
+        window.history.pushState(null, '', '/checkout');
+      } else if (view === 'profile') {
+        window.history.pushState(null, '', '/profile');
+      } else if (view === 'shop') {
+        window.history.pushState(null, '', '/');
+      }
+    }
+  };
 
   // Full-stack DB state
   const [products, setProducts] = useState<Product[]>([]);
@@ -84,13 +175,9 @@ export default function App() {
     fetchDB();
 
     const handlePopState = () => {
-      if (typeof window !== 'undefined') {
-        if (window.location.pathname === '/why-cetaphil') {
-          setCurrentView('why-cetaphil');
-        } else {
-          setCurrentView('shop');
-        }
-      }
+      const route = parseRouteFromLocation();
+      setCurrentView(route.view);
+      setSelectedProductId(route.productId);
     };
 
     window.addEventListener('popstate', handlePopState);
@@ -303,6 +390,23 @@ export default function App() {
     ? (buyNowItem ? [buyNowItem] : [])
     : cart;
 
+  // Sync document.title and address bar for PDP if activeProduct is found
+  useEffect(() => {
+    if (currentView === 'pdp' && activeProduct) {
+      document.title = `${activeProduct.name} | Cetaphil Sri Lanka`;
+      const targetSlug = activeProduct.slug || activeProduct.id;
+      if (typeof window !== 'undefined' && !window.location.pathname.includes(targetSlug)) {
+        window.history.replaceState({ view: 'pdp', productId: targetSlug }, '', `/product/${targetSlug}`);
+      }
+    } else if (currentView === 'why-cetaphil') {
+      document.title = 'Why Cetaphil | Nervidia Sri Lanka';
+    } else if (currentView === 'baby') {
+      document.title = 'Cetaphil Baby Care | Sri Lanka';
+    } else {
+      document.title = 'Cetaphil - Dermatologist-Recommended Skincare Sri Lanka';
+    }
+  }, [currentView, activeProduct]);
+
   // App loading screen
   if (loading) {
     return (
@@ -347,8 +451,8 @@ export default function App() {
       {/* Sticky Top Header */}
       <Header
         currentView={currentView}
-        setCurrentView={setCurrentView}
-        setSelectedProductId={setSelectedProductId}
+        setCurrentView={handleSetCurrentView}
+        setSelectedProductId={handleSelectProduct}
         cartCount={cart.reduce((acc, item) => acc + item.quantity, 0)}
         onCartToggle={() => setIsCartOpen(!isCartOpen)}
         products={products}
@@ -362,15 +466,15 @@ export default function App() {
             products={products}
             onAddToCart={handleAddToCart}
             onBuyNow={handleBuyNow}
-            setSelectedProductId={setSelectedProductId}
-            setCurrentView={setCurrentView}
+            setSelectedProductId={handleSelectProduct}
+            setCurrentView={handleSetCurrentView}
           />
         )}
 
         {currentView === 'why-cetaphil' && (
           <WhyCetaphilPage
-            setCurrentView={setCurrentView}
-            setSelectedProductId={setSelectedProductId}
+            setCurrentView={handleSetCurrentView}
+            setSelectedProductId={handleSelectProduct}
           />
         )}
 
@@ -379,8 +483,8 @@ export default function App() {
             products={products}
             onAddToCart={handleAddToCart}
             onBuyNow={handleBuyNow}
-            setSelectedProductId={setSelectedProductId}
-            setCurrentView={setCurrentView}
+            setSelectedProductId={handleSelectProduct}
+            setCurrentView={handleSetCurrentView}
           />
         )}
 
@@ -390,9 +494,30 @@ export default function App() {
             products={products}
             onAddToCart={handleAddToCart}
             onBuyNow={handleBuyNow}
-            setSelectedProductId={setSelectedProductId}
-            setCurrentView={setCurrentView}
+            setSelectedProductId={handleSelectProduct}
+            setCurrentView={handleSetCurrentView}
           />
+        )}
+
+        {currentView === 'pdp' && !activeProduct && (
+          <div className="max-w-md mx-auto px-4 py-20 text-center space-y-4">
+            <div className="w-16 h-16 bg-blue-50 text-[#002D62] rounded-full flex items-center justify-center mx-auto border border-blue-100">
+              <AlertCircle className="w-8 h-8 text-[#0082C8]" />
+            </div>
+            <h2 className="text-xl font-bold text-[#002D62]">Product Not Found</h2>
+            <p className="text-xs text-gray-500 leading-relaxed">
+              We couldn't find the product requested at this link. It may have moved or been updated.
+            </p>
+            <button
+              onClick={() => {
+                handleSelectProduct(null);
+                handleSetCurrentView('shop');
+              }}
+              className="px-6 py-2.5 bg-[#002D62] text-white text-xs font-bold rounded-full hover:bg-[#0082C8] transition-colors cursor-pointer"
+            >
+              Back to All Products
+            </button>
+          </div>
         )}
 
         {(currentView === 'blog' || currentView === 'tips') && (
@@ -400,8 +525,8 @@ export default function App() {
             articles={articles}
             products={products}
             onAddToCart={handleAddToCart}
-            setCurrentView={setCurrentView}
-            setSelectedProductId={setSelectedProductId}
+            setCurrentView={handleSetCurrentView}
+            setSelectedProductId={handleSelectProduct}
           />
         )}
 
@@ -409,16 +534,16 @@ export default function App() {
           <SkinQuiz
             products={products}
             onAddToCart={handleAddToCart}
-            setCurrentView={setCurrentView}
-            setSelectedProductId={setSelectedProductId}
+            setCurrentView={handleSetCurrentView}
+            setSelectedProductId={handleSelectProduct}
           />
         )}
 
         {currentView === 'consult' && (
           <AIConsult
             products={products}
-            setCurrentView={setCurrentView}
-            setSelectedProductId={setSelectedProductId}
+            setCurrentView={handleSetCurrentView}
+            setSelectedProductId={handleSelectProduct}
           />
         )}
 
@@ -429,7 +554,7 @@ export default function App() {
             onUpdateQuantity={handleUpdateCheckoutQuantity}
             onRemoveItem={handleRemoveCheckoutItem}
             onOrderSuccess={handleOrderSuccess}
-            setCurrentView={setCurrentView}
+            setCurrentView={handleSetCurrentView}
           />
         )}
 
@@ -437,8 +562,8 @@ export default function App() {
           <UserDashboard
             orders={orders}
             onReorder={handleReorder}
-            setCurrentView={setCurrentView}
-            setSelectedProductId={setSelectedProductId}
+            setCurrentView={handleSetCurrentView}
+            setSelectedProductId={handleSelectProduct}
           />
         )}
       </main>
@@ -454,7 +579,7 @@ export default function App() {
       />
 
       {/* Global Footer */}
-      <Footer setCurrentView={setCurrentView} setSelectedProductId={setSelectedProductId} />
+      <Footer setCurrentView={handleSetCurrentView} setSelectedProductId={handleSelectProduct} />
 
       {/* Static Floating WhatsApp Button */}
       <WhatsAppButton />

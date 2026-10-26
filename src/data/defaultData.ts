@@ -157,15 +157,13 @@ export const defaultDatabaseState: DBState = {
       is_active: true,
       image_urls: [
         "https://imgur.com/6dMsLux",
-        "https://imgur.com/0V0aKvE",
-        "https://imgur.com/a/Gqr4XQJ"
+        "https://imgur.com/0V0aKvE"
       ],
       image: "https://i.imgur.com/6dMsLux.png",
       image_url: "https://i.imgur.com/6dMsLux.png",
       images: [
         "https://i.imgur.com/6dMsLux.png",
-        "https://i.imgur.com/0V0aKvE.png",
-        "https://i.imgur.com/Gqr4XQJ.png"
+        "https://i.imgur.com/0V0aKvE.png"
       ],
       skinConcern: [
         "Sensitive Skin",

@@ -41,16 +41,14 @@ export const PRODUCT_IMAGE_REGISTRY: Record<string, { primary: string; gallery: 
     primary: 'https://i.imgur.com/6dMsLux.png',
     gallery: [
       'https://i.imgur.com/6dMsLux.png',
-      'https://i.imgur.com/0V0aKvE.png',
-      'https://i.imgur.com/Gqr4XQJ.png'
+      'https://i.imgur.com/0V0aKvE.png'
     ]
   },
   'cet-daily-facial-cleanser-591': {
     primary: 'https://i.imgur.com/6dMsLux.png',
     gallery: [
       'https://i.imgur.com/6dMsLux.png',
-      'https://i.imgur.com/0V0aKvE.png',
-      'https://i.imgur.com/Gqr4XQJ.png'
+      'https://i.imgur.com/0V0aKvE.png'
     ]
   },
   'cetaphil-moisturizing-cream-85g': {
@@ -290,6 +288,18 @@ export function toDirectImageUrl(url: string | undefined | null, productIdentifi
   }
   if (trimmed.includes('ubdzYUt') || trimmed.includes('u04vmdz')) {
     return 'https://i.imgur.com/u04vmdz.png';
+  }
+
+  // Remove and replace known broken or removed images
+  if (trimmed.includes('Gqr4XQJ') || trimmed.includes('removed.png')) {
+    if (productIdentifier) {
+      const matched = getProductDirectImages(productIdentifier);
+      if (matched) return matched.primary;
+    }
+    return 'https://i.imgur.com/6dMsLux.png';
+  }
+  if (trimmed.includes('u6jWEZf')) {
+    return 'https://i.imgur.com/stYPYVz.jpeg';
   }
 
   // Already a direct i.imgur.com CDN link with extension

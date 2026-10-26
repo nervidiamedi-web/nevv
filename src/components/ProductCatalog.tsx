@@ -98,9 +98,13 @@ export default function ProductCatalog({
     ) || products[0];
   }, [products]);
 
-  const handleCardClick = (id: string) => {
-    setSelectedProductId(id);
+  const handleCardClick = (idOrSlug: string) => {
+    setSelectedProductId(idOrSlug);
     setCurrentView('pdp');
+    if (typeof window !== 'undefined') {
+      window.history.pushState({ view: 'pdp', productId: idOrSlug }, '', `/product/${idOrSlug}`);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   const resetFilters = () => {
@@ -548,18 +552,26 @@ export default function ProductCatalog({
                     </span>
                   )}
 
-                  {/* Product Image click block */}
-                  <div
-                    onClick={() => handleCardClick(product.id)}
-                    className="relative w-full h-52 bg-white cursor-pointer overflow-hidden p-4 flex items-center justify-center border-b border-gray-100"
+                  {/* Product Image link block */}
+                  <a
+                    href={`/product/${product.slug || product.id}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleCardClick(product.slug || product.id);
+                    }}
+                    className="relative w-full h-52 bg-white cursor-pointer overflow-hidden p-4 flex items-center justify-center border-b border-gray-100 block"
+                    aria-label={`View ${product.name}`}
                   >
                     <img
                       src={toDirectImageUrl(product.image_url || product.image, product.slug || product.id)}
                       alt={product.name}
                       referrerPolicy="no-referrer"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = 'https://i.imgur.com/IxpPRLh.png';
+                      }}
                       className="max-h-full max-w-full object-contain group-hover:scale-106 transition-transform duration-300"
                     />
-                  </div>
+                  </a>
 
                   {/* Card Content info */}
                   <div className="p-4 sm:p-5 flex-grow flex flex-col justify-between space-y-3">
@@ -576,11 +588,17 @@ export default function ProductCatalog({
                       </div>
 
                       <div className="flex items-baseline justify-between gap-1.5">
-                        <h3
-                          onClick={() => handleCardClick(product.id)}
-                          className="text-xs font-bold text-[#0A1C2A] leading-snug group-hover:text-[#0082C8] hover:underline cursor-pointer line-clamp-2 min-h-8 transition-colors flex-grow"
-                        >
-                          {product.name}
+                        <h3 className="text-xs font-bold text-[#0A1C2A] leading-snug group-hover:text-[#0082C8] line-clamp-2 min-h-8 transition-colors flex-grow">
+                          <a
+                            href={`/product/${product.slug || product.id}`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleCardClick(product.slug || product.id);
+                            }}
+                            className="hover:underline cursor-pointer"
+                          >
+                            {product.name}
+                          </a>
                         </h3>
                         {product.size && (
                           <span className="text-[10px] font-bold text-[#002D62] bg-[#EEF5F9] px-2 py-0.5 rounded-md border border-[#D1E5F2] whitespace-nowrap shrink-0">
@@ -709,7 +727,7 @@ export default function ProductCatalog({
                   onClick={() => {
                     const serumProduct = products.find(p => p.name.toLowerCase().includes('serum') || p.id === 'serum-1' || p.category === 'serum');
                     if (serumProduct) {
-                      handleCardClick(serumProduct.id);
+                      handleCardClick(serumProduct.slug || serumProduct.id);
                     } else {
                       const el = document.getElementById('catalog-grid-start');
                       el?.scrollIntoView({ behavior: 'smooth' });
@@ -775,7 +793,7 @@ export default function ProductCatalog({
               {/* Left Column: Image Showcase from user URL https://imgur.com/a/ubdzYUt */}
               <div className="lg:col-span-6 order-2 lg:order-1">
                 <div 
-                  onClick={() => oilyProduct && handleCardClick(oilyProduct.id)}
+                  onClick={() => oilyProduct && handleCardClick(oilyProduct.slug || oilyProduct.id)}
                   className="relative rounded-3xl overflow-hidden shadow-xl bg-white border border-[#E2EBF1] group cursor-pointer aspect-square sm:aspect-[4/3] lg:aspect-square flex items-center justify-center p-4 sm:p-6"
                 >
                   <img
@@ -783,6 +801,9 @@ export default function ProductCatalog({
                     alt="Cetaphil Oily Skin Cleanser - Deep Cleansing &amp; Barrier Defense for Oily Skin"
                     className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src = 'https://i.imgur.com/QexihB2.png';
+                    }}
                   />
 
                   {/* Badges on Top Left & Right */}

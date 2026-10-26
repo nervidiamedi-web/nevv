@@ -174,7 +174,7 @@ export default function WhyCetaphilPage({ setCurrentView }: WhyCetaphilPageProps
                     <img
                       src="https://i.imgur.com/stYPYVz.jpeg"
                       onError={(e) => {
-                        (e.currentTarget as HTMLImageElement).src = 'https://i.imgur.com/u6jWEZf.jpeg';
+                        (e.currentTarget as HTMLImageElement).src = '/src/assets/images/banner_slide_1.jpg';
                       }}
                       alt="Cetaphil Skincare Range"
                       referrerPolicy="no-referrer"
