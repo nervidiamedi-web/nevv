@@ -3,7 +3,7 @@ import { defaultDatabaseState } from '../data/defaultData';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { toDirectImageUrl, toDirectImageUrls, calculateReviewRating, getProductDirectImages } from '../lib/imageUrl';
 
-const STORAGE_KEY = 'cetaphil_clinical_db_v3';
+const STORAGE_KEY = 'cetaphil_clinical_db_v4';
 
 /**
  * Loads active products directly from Supabase:
@@ -86,7 +86,7 @@ export async function fetchActiveProductsFromSupabase(): Promise<Product[] | nul
           tag: item.badge || item.tag || defaultMatch?.badge || undefined,
           short_description: item.short_description || defaultMatch?.short_description || '',
           description: item.description || defaultMatch?.description || '',
-          price: Number(item.price) || defaultMatch?.price || 0,
+          price: defaultMatch?.price !== undefined ? defaultMatch.price : (Number(item.price) || 0),
           stock: item.stock !== undefined && item.stock !== null ? Number(item.stock) : (defaultMatch?.stock || 250),
           image_urls: directImages,
           image: primaryImage,

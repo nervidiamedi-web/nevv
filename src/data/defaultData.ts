@@ -79,7 +79,7 @@ export const defaultDatabaseState: DBState = {
       tag: "Popular",
       short_description: "A mild soap-free, fragrance-free cleanser that cleanses without irritation. It is pH-balanced, non-comedogenic, and helps retain the skin's natural moisture barrier.",
       description: "This best-selling cleanser uses Micellar Technology to gently yet effectively remove dirt, makeup, and impurities while providing continuous hydration to protect against dryness. It can be used with or without water and can also serve as a light makeup remover. Dermatologically tested and clinically proven to be gentle on skin. Suitable for sensitive, dry, or normal skin.",
-      price: 3210,
+      price: 3510,
       stock: 250,
       is_active: true,
       image_urls: [

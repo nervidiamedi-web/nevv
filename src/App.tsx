@@ -153,11 +153,33 @@ export default function App() {
       const sbProducts = await fetchActiveProductsFromSupabase();
       const data = await fetchDatabaseState();
       
-      if (sbProducts && sbProducts.length > 0) {
-        setProducts(sbProducts);
-      } else {
-        setProducts(data.products || []);
-      }
+      const resolvedProducts = (sbProducts && sbProducts.length > 0) ? sbProducts : (data.products || []);
+      setProducts(resolvedProducts);
+
+      // Keep cart prices in sync with latest catalog prices
+      setCart(prevCart => {
+        if (!prevCart.length) return prevCart;
+        let changed = false;
+        const updated = prevCart.map(item => {
+          const match = resolvedProducts.find(p => p.id === item.id || p.slug === item.id);
+          if (match && Number(match.price) !== item.price) {
+            changed = true;
+            return {
+              ...item,
+              price: Number(match.price),
+              product: match
+            };
+          }
+          return item;
+        });
+        if (changed) {
+          try {
+            localStorage.setItem('cetaphil_cart_items', JSON.stringify(updated));
+          } catch {}
+          return updated;
+        }
+        return prevCart;
+      });
 
       setArticles(data.articles || []);
       setOrders(data.orders || []);
