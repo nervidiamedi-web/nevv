@@ -80,7 +80,7 @@ export default function Header({
     <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-100 shadow-xs">
       {/* Top Nourishing & Hydrating Campaign Banner - Exact design & color match */}
       <div className="w-full bg-[#D80075] text-white py-2 px-4 sm:px-8 lg:px-12 border-b-2 border-[#002D62]">
-        <div className="max-w-7xl mx-auto flex items-center justify-center sm:justify-end">
+        <div className="max-w-7xl mx-auto flex items-center justify-center text-center">
           <button
             onClick={() => {
               handleNavClick('shop');
@@ -89,7 +89,7 @@ export default function Header({
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
               }, 80);
             }}
-            className="text-xs sm:text-sm font-bold text-white underline underline-offset-4 decoration-white hover:opacity-90 transition-opacity cursor-pointer tracking-wide"
+            className="text-xs sm:text-sm font-bold text-white underline underline-offset-4 decoration-white hover:opacity-90 transition-opacity cursor-pointer tracking-wide text-center"
           >
             NEW Nourishing & Hydrating Line!
           </button>
